@@ -1,9 +1,9 @@
 export default function Hero() {
     return (
       <section className="relative w-full h-screen overflow-hidden">
-        {/* Video Background */}
+        {/* Background video */}
         <video
-          className="absolute top-0 left-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover"
           src="/videos/bg.mp4"
           autoPlay
           muted
@@ -15,7 +15,7 @@ export default function Hero() {
         <div className="absolute inset-0 bg-black/50 z-10"></div>
   
         {/* Centered Text */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white z-20 px-4">
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center z-20 text-white px-4">
           <h1
             className="text-7xl md:text-9xl mb-8 drop-shadow-xl"
             style={{ fontFamily: "Sandoll GothicNeo3, sans-serif", fontWeight: 400 }}
