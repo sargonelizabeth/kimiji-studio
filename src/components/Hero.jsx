@@ -9,14 +9,13 @@ export default function Hero() {
           backgroundColor: "#000",
         }}
       >
-        {/* Video Background (유튜브 UI 완전 차단) */}
+        {/* Background video */}
         <video
           src="/videos/bg.mp4"
           autoPlay
           muted
           loop
           playsInline
-          preload="auto"
           style={{
             position: "absolute",
             top: "50%",
@@ -28,7 +27,7 @@ export default function Hero() {
           }}
         />
   
-        {/* 어둡게 오버레이 */}
+        {/* Overlay */}
         <div
           style={{
             position: "absolute",
@@ -38,7 +37,7 @@ export default function Hero() {
           }}
         />
   
-        {/* 중앙 정렬 텍스트 */}
+        {/* Centered Text */}
         <div
           style={{
             position: "absolute",
@@ -49,8 +48,8 @@ export default function Hero() {
             justifyContent: "center",
             textAlign: "center",
             color: "#fff",
-            padding: "0 16px",
             zIndex: 2,
+            padding: "0 16px",
           }}
         >
           <h1
@@ -59,9 +58,9 @@ export default function Hero() {
               fontWeight: 400,
               margin: 0,
               marginBottom: "24px",
+              fontSize: "clamp(48px, 8vw, 120px)",
               lineHeight: 1.05,
               textShadow: "0 2px 18px rgba(0,0,0,0.6)",
-              fontSize: "clamp(48px, 8vw, 120px)", // 모바일~데스크탑 자동 반응형
             }}
           >
             KIMIJI STUDIO
@@ -71,9 +70,9 @@ export default function Hero() {
               fontFamily: "Sandoll Smiley Sans",
               fontWeight: 400,
               margin: 0,
+              fontSize: "clamp(20px, 3.5vw, 56px)",
               lineHeight: 1.2,
               textShadow: "0 2px 14px rgba(0,0,0,0.5)",
-              fontSize: "clamp(20px, 3.5vw, 56px)",
             }}
           >
             일상 사진에서 스튜디오 화보로!
