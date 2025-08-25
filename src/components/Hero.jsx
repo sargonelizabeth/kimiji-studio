@@ -1,17 +1,15 @@
 export default function Hero() {
     return (
       <section className="relative w-full h-screen overflow-hidden">
-        {/* YouTube Background */}
-        <div className="absolute inset-0 w-full h-full overflow-hidden">
-          <iframe
-            className="absolute top-1/2 left-1/2 min-w-full min-h-full -translate-x-1/2 -translate-y-1/2"
-            src="https://www.youtube.com/embed/BqCjCxn2CUw?autoplay=1&mute=1&loop=1&playlist=BqCjCxn2CUw&controls=0&modestbranding=1&rel=0"
-            title="KIMIJI STUDIO Intro"
-            frameBorder="0"
-            allow="autoplay; fullscreen"
-            allowFullScreen
-          ></iframe>
-        </div>
+        {/* Video Background */}
+        <video
+          className="absolute top-0 left-0 w-full h-full object-cover"
+          src="/videos/bg.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+        ></video>
   
         {/* Dark overlay */}
         <div className="absolute inset-0 bg-black/50 z-10"></div>
@@ -31,9 +29,6 @@ export default function Hero() {
             일상에서 스튜디오 사진으로!
           </p>
         </div>
-  
-        {/* Prevent YouTube Hover UI */}
-        <div className="absolute inset-0 z-30"></div>
       </section>
     );
   }
