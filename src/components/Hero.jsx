@@ -26,7 +26,7 @@ export default function Hero() {
             className="text-3xl md:text-5xl drop-shadow-lg"
             style={{ fontFamily: "Sandoll Smiley Sans, sans-serif", fontWeight: 400 }}
           >
-            일상에서 스튜디오 사진으로!
+            일상 사진에서 스튜디오 화보로!
           </p>
         </div>
       </section>
