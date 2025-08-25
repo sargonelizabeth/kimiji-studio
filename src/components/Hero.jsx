@@ -12,10 +12,10 @@ export default function Hero() {
         ></iframe>
   
         {/* Dark Overlay */}
-        <div className="absolute inset-0 bg-black/40"></div>
+        <div className="absolute inset-0 bg-black/40 z-10"></div>
   
         {/* Centered Text */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-4">
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-4 z-20">
           <h1 className="font-smiley text-6xl md:text-8xl mb-6 drop-shadow-lg">
             KIMIJI STUDIO
           </h1>
