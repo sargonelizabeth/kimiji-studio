@@ -1,3 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* 최소 리셋: 화면 꽉 채우기 + 기본 여백 제거 */
+html, body, #root { height: 100%; }
+* { box-sizing: border-box; }
+body { margin: 0; background: #000; }

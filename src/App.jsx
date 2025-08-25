@@ -1,11 +1,5 @@
 import Hero from "./components/Hero";
 
-function App() {
-  return (
-    <div>
-      <Hero />
-    </div>
-  );
+export default function App() {
+  return <Hero />;
 }
-
-export default App;
