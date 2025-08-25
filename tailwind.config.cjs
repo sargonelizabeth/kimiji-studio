@@ -1,7 +1,9 @@
-module.exports = {
-  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+export default {
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        smiley: ["Sandoll Smiley Sans", "sans-serif"],
+      },
+    },
   },
-  plugins: [],
-}
+};
