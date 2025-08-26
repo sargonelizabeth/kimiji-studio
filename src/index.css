@@ -1,77 +1,21 @@
-/* ============================
-   KIMIJI STUDIO — Global Styles
-   ============================ */
-
-/* 기본 리셋 */
 html, body, #root { height: 100%; }
 * { box-sizing: border-box; }
 
-/* 전역 컬러 */
-:root {
-  --bg: #000;
-  --text: #fff;
-}
+:root { --bg:#000; --text:#fff; }
 
-/* 산돌 패밀리: family는 하나, weight로 구분 */
-:root{
-  --sd: "Sandoll GothicNeoRound";
-}
-
-/* 바탕/텍스트 대비 고정 + 기본 타이포(400) */
 body{
-  margin: 0;
-  background: var(--bg);
-  color: var(--text);
-
-  font-family: var(--sd), "Apple SD Gothic Neo", "Noto Sans KR",
-               -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-weight: 400;
-
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-  -webkit-text-size-adjust: 100%;
-  font-synthesis: none; /* 가짜 Bold/Italic 금지 */
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  text-rendering:optimizeLegibility;
+  -webkit-text-size-adjust:100%;
+  font-synthesis:none; /* 가짜 두께 방지 */
 }
 
-/* 링크 파란색 방지 + 상위 색상 상속 */
+/* 링크 파란색 방지 */
 a, a:visited, a:hover, a:active { color: inherit; text-decoration: none; }
 
-/* ===== 폰트 강제 규칙 =====
-   작은 글씨 전부 400으로 '확정'.
-   (일부 라이브러리/인라인 스타일이 있어도 덮어쓰도록 !important)
-*/
-body,
-h1,h2,h3,h4,h5,h6,
-p,a,small,button,figcaption,
-nav,footer,section,header,main,aside,
-div,span,li,ul,ol,
-label,input,textarea,select {
-  font-family: var(--sd), "Apple SD Gothic Neo", "Noto Sans KR",
-               -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-  font-weight: 400 !important;
-  color: inherit;
-}
-
-/* 제목/브랜드/버튼 전용 700 — 요소에 class="sd-700" 달면 적용 */
-.sd-700 {
-  font-family: var(--sd), "Apple SD Gothic Neo", "Noto Sans KR",
-               -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-  font-weight: 700 !important;
-}
-
-/* 필요 시 명시적으로 400을 강제하고 싶을 때 */
-.sd-400 {
-  font-family: var(--sd), "Apple SD Gothic Neo", "Noto Sans KR",
-               -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-  font-weight: 400 !important;
-}
-
-/* 섹션/네비/푸터는 기본적으로 흰 글자 상속 */
+/* 섹션 컨테이너는 흰 글자 상속 */
 section, nav, footer { color: var(--text); }
-
-/* 이미지/비디오는 레이아웃 흔들림 방지 */
-img, video { display: block; max-width: 100%; height: auto; }
-
-/* 버튼 기본 커서 */
-button, [role="button"], .btn { cursor: pointer; }
