@@ -44,7 +44,7 @@ export default function Hero() {
         <div
           style={{
             position: "absolute",
-            top: "7vh",                  // 화면 상단에서 살짝 띄움
+            top: "7vh",                 // 상단 중앙 배치
             left: "50%",
             transform: "translateX(-50%)",
             textAlign: "center",
@@ -54,30 +54,29 @@ export default function Hero() {
             letterSpacing: "-0.01em",
           }}
         >
-          {/* 타이틀: Sandoll GothicNeo3 */}
+          {/* 타이틀: Sandoll GothicNeoRound 700 */}
           <h1
             style={{
-              fontFamily: "Sandoll GothicNeo3",
-              fontWeight: 400,
+              fontFamily: "Sandoll GothicNeoRound",
+              fontWeight: 700,
               margin: 0,
               lineHeight: 1.08,
               textShadow: "0 2px 18px rgba(0,0,0,0.6)",
-              // 데스크톱에서 크게, 모바일에서 자동 축소
               fontSize: "clamp(56px, 9vw, 128px)",
             }}
           >
             KIMIJI STUDIO
           </h1>
 
-          {/* 부제: Sandoll Smiley Sans (타이틀의 1/2 크기) */}
+          {/* 부제: Sandoll GothicNeoRound 400 (타이틀의 1/2 크기 감각) */}
           <p
             style={{
-              fontFamily: "Sandoll Smiley Sans",
+              fontFamily: "Sandoll GothicNeoRound",
               fontWeight: 400,
               margin: "12px 0 0 0",
               lineHeight: 1.15,
               textShadow: "0 2px 14px rgba(0,0,0,0.5)",
-              fontSize: "clamp(28px, 4.5vw, 64px)", // 타이틀의 절반 감각
+              fontSize: "clamp(28px, 4.5vw, 64px)",
             }}
           >
             일상 사진에서 스튜디오 화보로!
@@ -99,12 +98,12 @@ export default function Hero() {
         >
           <p
             style={{
-              fontFamily: "Sandoll Smiley Sans",
+              fontFamily: "Sandoll GothicNeoRound",
               fontWeight: 400,
               margin: 0,
               lineHeight: 1.35,
               textShadow: "0 2px 12px rgba(0,0,0,0.5)",
-              fontSize: "clamp(16px, 2.6vw, 24px)",
+              fontSize: "clamp(16px, 2.4vw, 22px)",
               letterSpacing: "-0.01em",
               whiteSpace: "pre-line",
             }}
@@ -112,7 +111,7 @@ export default function Hero() {
             {"사진관에 가지 않아도,\n우리 아이의 일상을 감성 스튜디오 사진으로 남길 수 있어요!"}
           </p>
 
-          {/* 둥근 "원형" 버튼 */}
+          {/* 둥근 "원형" 버튼: Sandoll GothicNeoRound 700 */}
           <a
             href="#make"
             style={{
@@ -121,13 +120,13 @@ export default function Hero() {
               justifyContent: "center",
               width: "120px",
               height: "120px",
-              borderRadius: "60px",      // 원형
+              borderRadius: "60px",
               marginTop: "18px",
               background: "#ffffff",
               color: "#111",
               textDecoration: "none",
-              fontFamily: "Sandoll GothicNeo3",
-              fontWeight: 400,
+              fontFamily: "Sandoll GothicNeoRound",
+              fontWeight: 700,
               fontSize: "18px",
               letterSpacing: "-0.01em",
               boxShadow: "0 10px 30px rgba(0,0,0,0.25)",
@@ -147,7 +146,7 @@ export default function Hero() {
         </div>
       </section>
 
-      {/* 섹션 B: bg2.mp4 위에 긴 문구 */}
+      {/* 섹션 B: bg2.mp4 위에 긴 문장 오버레이 */}
       <section
         style={{
           position: "relative",
@@ -195,26 +194,30 @@ export default function Hero() {
             letterSpacing: "-0.005em",
           }}
         >
+          {/* 헤드라인은 굵게(700) */}
           <h2
             style={{
-              fontFamily: "Sandoll GothicNeo3",
-              fontWeight: 400,
+              fontFamily: "Sandoll GothicNeoRound",
+              fontWeight: 700,
               margin: "0 0 18px 0",
-              fontSize: "clamp(24px, 3.6vw, 40px)",
+              fontSize: "clamp(24px, 3.4vw, 40px)",
               lineHeight: 1.15,
               textShadow: "0 2px 16px rgba(0,0,0,0.5)",
+              whiteSpace: "pre-line",
             }}
           >
-            KIMIJI STUDIO는 <br />단순히 예쁜 이미지를 만드는 곳이 아닙니다.
+            {`KIMIJI STUDIO는 
+단순히 예쁜 이미지를 만드는 곳이 아닙니다.`}
           </h2>
 
+          {/* 본문은 레귤러(400) */}
           <p
             style={{
-              fontFamily: "Sandoll Smiley Sans",
+              fontFamily: "Sandoll GothicNeoRound",
               fontWeight: 400,
               margin: 0,
               whiteSpace: "pre-line",
-              lineHeight: 1.6,
+              lineHeight: 1.65,
               fontSize: "clamp(16px, 2.1vw, 22px)",
               textShadow: "0 2px 12px rgba(0,0,0,0.45)",
             }}
