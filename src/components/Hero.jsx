@@ -17,6 +17,7 @@ export default function Hero() {
           autoPlay muted loop playsInline preload="auto"
           // @ts-ignore
           webkit-playsinline="true"
+          onError={(e)=>{ e.currentTarget.style.display='none'; }} // 영상 실패해도 텍스트는 보이게
         >
           <source src="/videos/bg.mp4" type="video/mp4" />
         </video>
@@ -29,10 +30,10 @@ export default function Hero() {
           <p style={{ margin:"8px 0 0 0", fontSize:"clamp(14px,3.2vw,20px)", opacity:.9 }}>일상에서 스튜디오 화보로!</p>
         </div>
 
-        {/* 하단 카피+버튼 */}
+        {/* 하단 카피(두 줄 고정) + 버튼 */}
         <div style={{ position:"absolute", bottom:"7vh", left:"50%", transform:"translateX(-50%)", zIndex:2, textAlign:"center", padding:"0 16px" }}>
           <p style={{ margin:0, whiteSpace:"pre-line", fontSize:"clamp(14px,3.2vw,20px)", opacity:.95 }}>
-            {"사진관에 가지 않아도 우리 아이의 일상을\n스튜디오 사진으로 남길 수 있어요!"}
+            {"사진관에 가지 않아도 우리아이의 일상을\n스튜디오 사진으로 남길 수 있어요!"}
           </p>
           <a href="#make" className="kj-800"
              style={{ display:"inline-flex", alignItems:"center", justifyContent:"center",
@@ -53,6 +54,7 @@ export default function Hero() {
           autoPlay muted loop playsInline preload="auto"
           // @ts-ignore
           webkit-playsinline="true"
+          onError={(e)=>{ e.currentTarget.style.display='none'; }}
         >
           <source src="/videos/bg2.mp4" type="video/mp4" />
         </video>
