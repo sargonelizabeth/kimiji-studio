@@ -2,10 +2,10 @@
 html, body, #root { height: 100%; }
 * { box-sizing: border-box; }
 
+/* ⚠️ 변수는 따옴표 없이 선언 (JS에서 동적으로 따옴표 포함으로 덮어씀) */
 :root {
-  /* DevTools→Network의 산돌 CSS 응답에 나온 정확한 family 문자열로 필요시 교체 */
-  --sd-400: "Sandoll GothicNeoRound";
-  --sd-700: "Sandoll GothicNeoRound";
+  --sd-400: Sandoll GothicNeoRound;  /* 임시 기본값 */
+  --sd-700: Sandoll GothicNeoRound;  /* 임시 기본값 */
 }
 
 body {
@@ -18,18 +18,17 @@ body {
                -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-weight: 400;
 
-  /* 모바일 렌더링 안정화 */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   -webkit-text-size-adjust: 100%;
-  font-synthesis: none; /* 실제 700/400이 내려오면 가짜Bold 금지 */
+  font-synthesis: none; /* 진짜 700/400만 사용 */
 }
 
 html { scroll-behavior: smooth; }
 a { color: inherit; text-decoration: none; }
 
-/* 전역 강제(모바일 포함) */
+/* 전역 강제: 모바일 포함 모든 기본 텍스트 400 */
 h1, h2, h3, h4, p, a, small, button, figcaption, nav, footer, div, span, li {
   font-family: var(--sd-400), "Apple SD Gothic Neo", "Noto Sans KR",
                -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
