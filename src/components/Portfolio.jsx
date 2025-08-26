@@ -1,4 +1,9 @@
-const works=["/assets/portfolio/p01.jpg","/assets/portfolio/p02.jpg","/assets/portfolio/p03.jpg","/assets/portfolio/p04.jpg"];
+const works=[
+  "/assets/portfolio/p01.jpg",
+  "/assets/portfolio/p02.jpg",
+  "/assets/portfolio/p03.jpg",
+  "/assets/portfolio/p04.jpg",
+];
 
 function onImgError(e){
   const el=e.currentTarget, tried=el.dataset.tried||"", base=el.src.split("?")[0];
@@ -13,7 +18,7 @@ export default function Portfolio() {
   const media={ width:"100%", aspectRatio:"4 / 5", objectFit:"cover", display:"block", background:"#111" };
 
   return (
-    <section id="works" className="kj-section kj-surface">
+    <section id="works" className="kj-section kj-surface kj-center">
       <h3 className="kj-800 kj-title">포트폴리오</h3>
       <div style={list}>
         {works.map((src,i)=>(
