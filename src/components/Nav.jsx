@@ -7,8 +7,11 @@ export default function Nav() {
   };
   const inner = { width:"100%", maxWidth:1160, padding:"0 16px", display:"flex", alignItems:"center", justifyContent:"space-between" };
   const brand = {
-    fontSize:"clamp(18px, 3.5vw, 20px)", letterSpacing:"-0.01em", whiteSpace:"nowrap",   // ✅ 한 줄 고정
-    overflow:"hidden", textOverflow:"ellipsis"
+    fontSize:"clamp(18px, 3.5vw, 20px)",
+    letterSpacing:"-0.01em",
+    whiteSpace:"nowrap",           // ✅ 한 줄 고정
+    overflow:"hidden",
+    textOverflow:"ellipsis"
   };
   const menu = { display:"flex", alignItems:"center", gap:16, fontSize:14 };
   const cta = {

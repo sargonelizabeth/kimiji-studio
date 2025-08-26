@@ -1,16 +1,28 @@
-const workModules = import.meta.glob(
-  '../assets/portfolio/*.{jpg,JPG,jpeg,JPEG,png,webp}',
-  { eager: true, as: 'url' }
-);
+const works = [
+  "/assets/portfolio/p01.jpg",
+  "/assets/portfolio/p02.jpg",
+  "/assets/portfolio/p03.jpg",
+  "/assets/portfolio/p04.jpg",
+];
 
-const works = (function(){
-  const order = ['p01','p02','p03','p04'];
-  return order.map((name) => {
-    const re = new RegExp(`(?:^|/)${name}\\.(?:jpe?g|png|webp)$`, 'i');
-    const entry = Object.entries(workModules).find(([path]) => re.test(path));
-    return entry ? entry[1] : null;
-  }).filter(Boolean);
-})();
+function onImgError(e){
+  const el = e.currentTarget;
+  const tried = el.dataset.tried || "";
+  const base = el.src.split("?")[0];
+
+  if (!tried.includes("JPG") && base.toLowerCase().endsWith(".jpg")) {
+    el.dataset.tried = tried + "JPG";
+    el.src = base.replace(/\.jpg$/i, ".JPG");
+    return;
+  }
+  if (!tried.includes("JPEG")) {
+    el.dataset.tried = tried + "JPEG";
+    el.src = base.replace(/\.jpe?g$/i, ".jpeg");
+    return;
+  }
+  el.style.opacity = "0.25";
+  el.alt = "이미지를 불러올 수 없습니다";
+}
 
 export default function Portfolio() {
   const section = { padding:"64px 16px", background:"#000", textAlign:"center" };
@@ -24,7 +36,9 @@ export default function Portfolio() {
       <h3 className="kj-800" style={title}>포트폴리오</h3>
       <div style={list}>
         {works.map((src,i)=>(
-          <figure key={i} style={card}><img src={src} alt={`work-${i+1}`} style={media} loading="lazy" /></figure>
+          <figure key={i} style={card}>
+            <img src={src} alt={`work-${i+1}`} style={media} onError={onImgError} loading="lazy" />
+          </figure>
         ))}
       </div>
     </section>

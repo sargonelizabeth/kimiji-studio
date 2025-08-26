@@ -1,18 +1,29 @@
-// 고객 이미지: c01~c04만 픽
-const customerModules = import.meta.glob(
-  '../assets/customers/*.{jpg,JPG,jpeg,JPEG,png,webp}',
-  { eager: true, as: 'url' }
-);
+const shots = [
+  "/assets/customers/c01.jpg",
+  "/assets/customers/c02.jpg",
+  "/assets/customers/c03.jpg",
+  "/assets/customers/c04.jpg",
+];
 
-function pick(mods, names) {
-  return names.map((name) => {
-    const re = new RegExp(`(?:^|/)${name}\\.(?:jpe?g|png|webp)$`, 'i');
-    const entry = Object.entries(mods).find(([path]) => re.test(path));
-    return entry ? entry[1] : null;
-  }).filter(Boolean);
+// 대소문자/확장자 변동 대비(선택): .jpg → .JPG → .jpeg 자동 폴백
+function onImgError(e){
+  const el = e.currentTarget;
+  const tried = el.dataset.tried || "";
+  const base = el.src.split("?")[0];
+
+  if (!tried.includes("JPG") && base.toLowerCase().endsWith(".jpg")) {
+    el.dataset.tried = tried + "JPG";
+    el.src = base.replace(/\.jpg$/i, ".JPG");
+    return;
+  }
+  if (!tried.includes("JPEG")) {
+    el.dataset.tried = tried + "JPEG";
+    el.src = base.replace(/\.jpe?g$/i, ".jpeg");
+    return;
+  }
+  el.style.opacity = "0.25";
+  el.alt = "이미지를 불러올 수 없습니다";
 }
-
-const shots = pick(customerModules, ['c01','c02','c03','c04']);
 
 export default function CustomerShots() {
   const section = { padding: "84px 16px 48px", background: "#0b0b0b", textAlign: "center" };
@@ -27,7 +38,7 @@ export default function CustomerShots() {
       <p style={desc}>실제 고객이 휴대폰으로 보낸 원본 일상 사진 샘플</p>
       <div style={grid}>
         {shots.map((src, i) => (
-          <img key={i} src={src} alt={`customer-${i+1}`} style={img} loading="lazy" />
+          <img key={i} src={src} alt={`customer-${i+1}`} style={img} onError={onImgError} loading="lazy" />
         ))}
       </div>
     </section>

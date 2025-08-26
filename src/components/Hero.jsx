@@ -7,14 +7,14 @@ export default function Hero() {
   const topGroup = { position:"absolute", top:"7vh", left:"50%", transform:"translateX(-50%)", zIndex:2, padding:"0 16px" };
   const bottomGroup = { position:"absolute", bottom:"7vh", left:"50%", transform:"translateX(-50%)", zIndex:2, textAlign:"center", padding:"0 16px" };
 
-  // ✅ 하단 카피: 정확히 2줄, 단어 중간 줄바꿈 금지
-  const copyWrap = { margin:0, textAlign:"center", lineHeight:1.5, fontSize:"clamp(13px,3.2vw,18px)", letterSpacing:"-0.01em" };
+  // ✅ 두 줄 고정: 각 줄을 block + nowrap, 한국어 단어 쪼개기 금지
+  const copyWrap = { margin:0, textAlign:"center", lineHeight:1.5, fontSize:"clamp(12px,3.2vw,18px)", letterSpacing:"-0.01em" };
   const line = { display:"block", whiteSpace:"nowrap", wordBreak:"keep-all" };
 
   return (
     <>
       {/* 섹션 A */}
-      <section style={{ position:"relative", width:"100vw", height:"100vh", overflow:"hidden", background:"#000", textAlign:"center" }} id="top">
+      <section id="top" style={{ position:"relative", width:"100vw", height:"100vh", overflow:"hidden", background:"#000", textAlign:"center" }}>
         <video style={videoStyle} autoPlay muted loop playsInline preload="auto" webkit-playsinline="true"
                onError={(e)=>{ e.currentTarget.style.display='none'; }}>
           <source src="/videos/bg.mp4" type="video/mp4" />
@@ -22,12 +22,12 @@ export default function Hero() {
 
         <div style={{ position:"absolute", inset:0, background:"rgba(0,0,0,.45)", zIndex:1 }} />
 
-        {/* 상단 타이틀: ✅ 한 줄 고정 */}
+        {/* 상단 타이틀: 한 줄 고정 */}
         <div style={topGroup}>
           <h1 className="kj-800" style={{
             margin:0, letterSpacing:"-0.02em",
             fontSize:"clamp(34px, 7vw, 72px)",
-            whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" // ✅
+            whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis"
           }}>
             KIMIJI STUDIO
           </h1>
@@ -36,7 +36,7 @@ export default function Hero() {
           </p>
         </div>
 
-        {/* 하단 카피: ✅ 두 줄 고정 */}
+        {/* 하단 카피: 정확히 2줄 */}
         <div style={bottomGroup}>
           <p style={copyWrap}>
             <span style={line}>사진관에 가지 않아도 <strong>우리 아이의 일상을</strong></span>
