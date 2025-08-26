@@ -4,6 +4,7 @@ export default function Nav() {
     display: "flex", alignItems: "center", justifyContent: "center",
     background: "rgba(0,0,0,0.25)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)",
     borderBottom: "1px solid rgba(255,255,255,0.12)",
+    color: "#fff", /* 링크 파랑 방지용 상위 컬러 */
   };
   const inner = {
     width: "100%", maxWidth: "1160px", padding: "0 16px",
