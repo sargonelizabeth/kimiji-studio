@@ -3,6 +3,26 @@ const works = Array.from({ length: 4 }, (_, i) =>
   `/assets/portfolio/p${String(i + 1).padStart(2, "0")}.jpg?rev=${REV}`
 );
 
+function onImgError(e){
+  const el = e.currentTarget;
+  const tried = el.dataset.tried || "";
+  const base = el.src.split("?")[0];
+  const qs = el.src.includes("?") ? "?" + el.src.split("?")[1] : "";
+
+  if (!tried.includes("JPG") && base.toLowerCase().endsWith(".jpg")) {
+    el.dataset.tried = tried + "JPG";
+    el.src = base.replace(/\.jpg$/i, ".JPG") + qs;
+    return;
+  }
+  if (!tried.includes("JPEG")) {
+    el.dataset.tried = tried + "JPEG";
+    el.src = base.replace(/\.jpe?g$/i, ".jpeg") + qs;
+    return;
+  }
+  el.style.opacity = "0.25";
+  el.alt = "이미지를 불러올 수 없습니다";
+}
+
 export default function Portfolio() {
   const section = { padding:"64px 16px", background:"#000", textAlign:"center" };
   const title   = { margin:"0 0 20px", fontSize:"clamp(18px, 4vw, 28px)" };
@@ -16,13 +36,7 @@ export default function Portfolio() {
       <div style={list}>
         {works.map((src,i)=>(
           <figure key={i} style={card}>
-            <img
-              src={src}
-              alt={`work-${i+1}`}
-              style={media}
-              onError={(e)=>{ e.currentTarget.style.opacity='0.25'; e.currentTarget.alt='이미지를 불러올 수 없습니다'; }}
-              loading="lazy"
-            />
+            <img src={src} alt={`work-${i+1}`} style={media} onError={onImgError} loading="lazy" />
           </figure>
         ))}
       </div>

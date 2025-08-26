@@ -1,13 +1,20 @@
-export default function SocialBar() {
-  const wrap = { padding:"24px 16px", textAlign:"center", background:"#000" };
-  const btn  = { display:"inline-flex", alignItems:"center", gap:8, padding:"10px 14px",
-                 borderRadius:9999, background:"#fff", color:"#111",
-                 fontSize:14, boxShadow:"0 6px 18px rgba(0,0,0,.25)" };
+const INSTAGRAM_URL = "https://instagram.com/kimiji.studio"; // 링크만 바꾸면 됨
+
+export default function SocialBar(){
+  const wrap = { display:"flex", justifyContent:"center", margin:"40px 0 12px" };
+  const btn  = {
+    display:"inline-flex", alignItems:"center", gap:10,
+    padding:"10px 16px", borderRadius:9999, background:"#fff", color:"#111",
+    boxShadow:"0 8px 24px rgba(0,0,0,.25)"
+  };
+  const icon = { width:20, height:20, display:"block" };
+
   return (
     <div style={wrap}>
-      <a href="https://instagram.com" target="_blank" rel="noreferrer" className="sd-700" style={btn}>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="#111">
-          <path d="M7 2C4.2 2 2 4.2 2 7v10c0 2.8 2.2 5 5 5h10c2.8 0 5-2.2 5-5V7c0-2.8-2.2-5-5-5H7zm0 2h10c1.7 0 3 1.3 3 3v10c0 1.7-1.3 3-3 3H7c-1.7 0-3-1.3-3-3V7c0-1.7 1.3-3 3-3zm11 1a1 1 0 100 2 1 1 0 000-2zM12 7a5 5 0 100 10 5 5 0 000-10z"/>
+      <a href={INSTAGRAM_URL} target="_blank" rel="noreferrer" style={btn} className="kj-800" aria-label="Instagram으로 이동">
+        {/* 인스타 아이콘 (SVG) */}
+        <svg viewBox="0 0 24 24" fill="currentColor" style={icon} aria-hidden="true">
+          <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7zm5 3a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2.2a2.8 2.8 0 1 0 0 5.6 2.8 2.8 0 0 0 0-5.6zM18 6.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
         </svg>
         Instagram
       </a>

@@ -5,15 +5,22 @@ export default function Hero() {
     transform: "translate(-50%, -50%)", objectFit: "cover",
   };
 
-  const lineWrapFix = {
+  // 두 줄이 어떤 화면에서도 정확히 2줄로 보이도록: nowrap + 적절한 폰트 사이즈 + 폭 제한
+  const copyWrap = {
     margin: 0,
     textAlign: "center",
-    // 🇰🇷 한글 단어 중간 줄바꿈 방지
-    wordBreak: "keep-all",
     lineHeight: 1.5,
-    fontSize: "clamp(14px,3.2vw,20px)",
-    opacity: 0.95
+    fontSize: "clamp(12px, 3.2vw, 18px)", // 모바일에서도 두 줄 유지
+    letterSpacing: "-0.01em",
   };
+  const line = {
+    display: "block",
+    whiteSpace: "nowrap",     // 단어 중간 줄바꿈 절대 금지
+    wordBreak: "keep-all",    // 한국어 단어 쪼개기 금지
+  };
+
+  const topGroup = { position:"absolute", top:"7vh", left:"50%", transform:"translateX(-50%)", zIndex:2, padding:"0 16px" };
+  const bottomGroup = { position:"absolute", bottom:"7vh", left:"50%", transform:"translateX(-50%)", zIndex:2, textAlign:"center", padding:"0 16px" };
 
   return (
     <>
@@ -27,7 +34,7 @@ export default function Hero() {
           autoPlay muted loop playsInline preload="auto"
           // @ts-ignore
           webkit-playsinline="true"
-          onError={(e)=>{ e.currentTarget.style.display='none'; }} // 영상 실패해도 텍스트는 보이게
+          onError={(e)=>{ e.currentTarget.style.display='none'; }}
         >
           <source src="/videos/bg.mp4" type="video/mp4" />
         </video>
@@ -35,16 +42,20 @@ export default function Hero() {
         <div style={{ position:"absolute", inset:0, background:"rgba(0,0,0,.45)", zIndex:1 }} />
 
         {/* 상단 타이틀/부제 */}
-        <div style={{ position:"absolute", top:"7vh", left:"50%", transform:"translateX(-50%)", zIndex:2, padding:"0 16px" }}>
-          <h1 className="kj-800" style={{ margin:0, fontSize:"clamp(36px,7vw,72px)", letterSpacing:"-0.02em" }}>KIMIJI STUDIO</h1>
-          <p style={{ margin:"8px 0 0 0", fontSize:"clamp(14px,3.2vw,20px)", opacity:.9 }}>일상에서 스튜디오 화보로!</p>
+        <div style={topGroup}>
+          <h1 className="kj-800" style={{ margin:0, fontSize:"clamp(36px,7vw,72px)", letterSpacing:"-0.02em" }}>
+            KIMIJI STUDIO
+          </h1>
+          <p style={{ margin:"8px 0 0 0", fontSize:"clamp(14px,3.2vw,20px)", opacity:.9 }}>
+            일상에서 스튜디오 화보로!
+          </p>
         </div>
 
-        {/* 하단 카피(두 줄 고정) + 버튼 */}
-        <div style={{ position:"absolute", bottom:"7vh", left:"50%", transform:"translateX(-50%)", zIndex:2, textAlign:"center", padding:"0 16px" }}>
-          <p style={lineWrapFix}>
-            <span style={{ display:"block" }}>사진관에 가지 않아도 <strong>우리 아이의 일상을</strong></span>
-            <span style={{ display:"block" }}>스튜디오 사진으로 남길 수 있어요!</span>
+        {/* 하단 카피: 정확히 2줄 */}
+        <div style={bottomGroup}>
+          <p style={copyWrap}>
+            <span style={line}>사진관에 가지 않아도 <strong>우리 아이의 일상을</strong></span>
+            <span style={line}>스튜디오 사진으로 남길 수 있어요!</span>
           </p>
           <a href="#make" className="kj-800"
              style={{ display:"inline-flex", alignItems:"center", justifyContent:"center",
@@ -55,7 +66,7 @@ export default function Hero() {
         </div>
       </section>
 
-      {/* 섹션 B: bg2.mp4 + 소개문 */}
+      {/* 섹션 B: bg2.mp4 */}
       <section
         id="about"
         style={{ position:"relative", width:"100vw", minHeight:"100vh", overflow:"hidden", background:"#000", textAlign:"center" }}
