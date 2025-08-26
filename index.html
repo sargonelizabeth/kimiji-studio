@@ -5,26 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>KIMIJI STUDIO</title>
 
-    <!-- 산돌 웹폰트: 캐시버스트 파라미터만 유지 -->
-    <link rel="preconnect" href="https://hmolhy4qpa.execute-api.ap-northeast-2.amazonaws.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://hmolhy4qpa.execute-api.ap-northeast-2.amazonaws.com/v1/api/css/drop_fontstream_css/?sid=gAAAAABorBr_uT6Uy4-5TLMEhfp1BPyRHXfpKMa7nKFipQnJ0LmjebuXFb4JDI8rJN52M_lhCk5sEo3sYEEXfAPIQmzWIfxB5WOpmKGbxVcvzWsZczNLh6k2gPfM9ADo57hXI2ZGcXnFrLsGyxC0jw47fcV93_SlzTGiX5n2wHnCmrJmudyRktqwAnqaxOFUh2OaqQwibaQEdUy5YpV-Zkw8tYHjVpIq_QMeoiBucM7jZHdJIWzkoVzh6x8pEQ5fk_POwSVGBnPL&v=stable1"
-      referrerpolicy="origin" crossorigin="anonymous"
-    />
+    <!-- 폰트 프리로드 (TTF) -->
+    <link rel="preload" href="/fonts/noto/NotoSansKR-SemiBold.ttf" as="font" type="font/ttf" crossorigin>
+    <link rel="preload" href="/fonts/noto/NotoSansKR-ExtraBold.ttf" as="font" type="font/ttf" crossorigin>
 
     <!-- 화면이 죽어도 보이는 최소 대비 -->
     <style>
       html, body, #root { height: 100%; }
       body { margin: 0; background: #000; color: #fff; }
       a { color: inherit; text-decoration: none; }
-      #boot-loading { position: fixed; z-index: 99999; top: 12px; left: 12px; font: 600 14px/1.4 "Sandoll GothicNeoRound", sans-serif; }
     </style>
   </head>
   <body>
-    <div id="root">
-      <div id="boot-loading">Loading…</div>
-    </div>
+    <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

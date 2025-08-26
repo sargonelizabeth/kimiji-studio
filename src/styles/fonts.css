@@ -1,0 +1,16 @@
+/* KIMIJI 전용 폰트 패밀리 (Noto Sans KR, TTF 자가 호스팅) */
+@font-face {
+  font-family: "KIMIJI-NotoKR";
+  src: url("/fonts/noto/NotoSansKR-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "KIMIJI-NotoKR";
+  src: url("/fonts/noto/NotoSansKR-ExtraBold.ttf") format("truetype");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}

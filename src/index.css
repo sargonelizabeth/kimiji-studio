@@ -1,39 +1,51 @@
-/* Reset */
+/* ========= Global Reset ========= */
 html, body, #root { height: 100%; }
 * { box-sizing: border-box; }
 
-/* Theme */
-:root { --bg:#000; --text:#fff; }
+/* ========= Theme ========= */
+:root{
+  --bg: #000;
+  --text: #fff;
+  --font-kimiji: "KIMIJI-NotoKR", -apple-system, BlinkMacSystemFont,
+                 "Segoe UI", Roboto, "Noto Sans KR", "Apple SD Gothic Neo",
+                 "Malgun Gothic", "Nanum Gothic", sans-serif;
+}
 
 body{
   margin:0;
   background:var(--bg);
   color:var(--text);
-  font-family: "Sandoll GothicNeoRound", "Apple SD Gothic Neo", "Noto Sans KR",
-               -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-weight: 400;
 
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
-  text-rendering:optimizeLegibility;
-  -webkit-text-size-adjust:100%;
-  font-synthesis:none;
+  /* 형님 요청: 기본(작은 글씨) = SemiBold(600) */
+  font-family: var(--font-kimiji);
+  font-weight: 600;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  -webkit-text-size-adjust: 100%;
+  font-synthesis: none; /* 가짜 Bold/Italic 방지 */
 }
 
-/* Link */
+/* 링크 파랑 제거 */
 a, a:visited, a:hover, a:active { color: inherit; text-decoration: none; }
 
-/* 기본 텍스트 계열은 400, 제목·버튼은 sd-700 사용 */
+/* ====== 텍스트 규칙 ====== */
+/* 작은 글씨(본문/메뉴/캡션 등) = 600 고정 */
 p, a, li, small, button, label, input, textarea, span, div, nav, footer {
-  font-weight: 400;
-  font-family: "Sandoll GothicNeoRound", "Apple SD Gothic Neo", "Noto Sans KR",
-               -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-kimiji);
+  font-weight: 600;
+  color: inherit;
 }
-.sd-700 {
-  font-weight: 700 !important;
-  font-family: "Sandoll GothicNeoRound", "Apple SD Gothic Neo", "Noto Sans KR",
-               -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+
+/* 큰 글씨(타이틀/버튼/브랜드) = 800 */
+.kj-800, .sd-700 {  /* 기존 .sd-700도 호환으로 800 처리 */
+  font-family: var(--font-kimiji) !important;
+  font-weight: 800 !important;
 }
 
 /* 섹션 컨테이너는 흰 글자 상속 */
 section, nav, footer { color: var(--text); }
+
+/* 이미지/비디오는 레이아웃 안정화 */
+img, video { display:block; max-width:100%; height:auto; }
