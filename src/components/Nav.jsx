@@ -1,5 +1,4 @@
-import React from "react";
-
+// 홈 네비 예시
 export default function Nav() {
   return (
     <nav className="kj-nav">
@@ -11,13 +10,6 @@ export default function Nav() {
           <a href="/#make">제작하기</a>
         </div>
       </div>
-      <style>{`
-        .kj-nav{position:sticky;top:0;z-index:20;backdrop-filter:blur(10px);background:rgba(255,255,255,.6)}
-        .kj-nav__inner{display:flex;align-items:center;justify-content:space-between;padding:10px 14px}
-        .kj-brand{font-weight:800;text-decoration:none;color:#111}
-        .kj-nav__links{display:flex;gap:14px;white-space:nowrap;overflow-x:auto}
-        .kj-nav__links a{text-decoration:none;color:#111;font-weight:700}
-      `}</style>
     </nav>
   );
 }
