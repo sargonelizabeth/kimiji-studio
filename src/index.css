@@ -2,15 +2,16 @@ html, body, #root { height: 100%; }
 * { box-sizing: border-box; }
 
 :root{
-  --bg:#000; --text:#fff;
+  --bg:#000; 
+  --text:#fff;
+
+  /* 형님 레퍼런스 이미지의 밝은 톤(라이트 로즈) */
+  --surface:#f3d1cd;
+  --surface-text:#111;
+
   --font-kimiji: "KIMIJI-NotoKR", -apple-system, BlinkMacSystemFont,
                  "Segoe UI", Roboto, "Noto Sans KR", "Apple SD Gothic Neo",
                  "Malgun Gothic", "Nanum Gothic", sans-serif;
-
-  /* 톤 컬러 (필요시 확장) */
-  --tone-red:#4c0f14;
-  --tone-teal:#0f2e34;
-  --tone-rose:#3a1719;
 }
 
 body{
@@ -19,7 +20,6 @@ body{
   color:var(--text);
   font-family:var(--font-kimiji);
   font-weight:600; /* 기본 600 */
-
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
   text-rendering:optimizeLegibility;
@@ -29,11 +29,9 @@ a{ color:inherit; text-decoration:none; }
 
 .kj-800{ font-weight:800!important; }
 .kj-softshadow{ text-shadow: 0 2px 8px rgba(0,0,0,.55); }
-
-/* 공통 섹션 패딩 */
 .kj-section{ padding: 64px 16px; }
 
-/* 카드 공통 */
+/* 다크용 카드(비디오 위) */
 .kj-card{
   background: rgba(255,255,255,.06);
   border: 1px solid rgba(255,255,255,.12);
@@ -43,36 +41,27 @@ a{ color:inherit; text-decoration:none; }
   box-shadow: 0 10px 30px rgba(0,0,0,.35);
 }
 
-/* 텍스쳐 배경 레이어(이미지 없으면 그라디언트 폴백) */
-.kj-texture{
-  position: relative;
-  overflow: hidden;
-  color:#fff;
+/* 라이트 배경용 카드 */
+.kj-card--light{
+  background:#fff;
+  border:1px solid rgba(0,0,0,.08);
+  border-radius:16px;
+  box-shadow:0 10px 30px rgba(0,0,0,.12);
+  color:#111;
 }
-.kj-texture::before{
-  content:"";
-  position:absolute; inset:0;
-  background:
-    radial-gradient(1200px 800px at 20% -10%, rgba(255,255,255,.05), transparent 60%),
-    radial-gradient(1200px 800px at 120% 110%, rgba(255,255,255,.05), transparent 60%),
-    linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.55));
-  z-index:1;
+
+/* 라이트 배경 섹션 */
+.kj-surface{
+  background:var(--surface);
+  color:var(--surface-text);
 }
-.kj-texture::after{
-  /* 아주 미세한 그레인 */
-  content:"";
-  position:absolute; inset:-50%;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.06'/%3E%3C/svg%3E");
-  mix-blend-mode: overlay;
-  z-index:1;
-  pointer-events:none;
-}
+.kj-surface a{ color:var(--surface-text); }
 
 /* 섹션 타이틀 공통 */
 .kj-title{ margin:0 0 20px; font-size: clamp(18px, 4vw, 28px); }
 .kj-sub{ margin:8px 0 0; opacity:.9; font-size: clamp(14px, 2.6vw, 18px); }
 
-/* 포트폴리오 이미지 카드 */
+/* 미디어 카드 */
 .kj-media-card{
   width: min(640px, 92vw);
   border-radius: 16px;
@@ -86,4 +75,14 @@ a{ color:inherit; text-decoration:none; }
   object-fit: cover;
   display:block;
   background:#111;
+}
+
+/* 흰색 디바이더(인스타 버튼 위에서 분리) */
+.kj-divider{
+  width:min(920px, 92vw);
+  height:1px;
+  margin:28px auto 8px;
+  background:#fff;
+  border:none;
+  opacity:.9;
 }
