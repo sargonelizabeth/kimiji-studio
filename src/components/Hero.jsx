@@ -1,83 +1,67 @@
-export default function Hero() {
-  const videoStyle = {
-    position:"absolute", top:"50%", left:"50%", minWidth:"100%", minHeight:"100%",
-    transform:"translate(-50%, -50%)", objectFit:"cover"
+// src/components/Hero.jsx
+const REV = "tx-20250826-01";
+
+function pickTexture(){
+  const list = [
+    "/textures/tx01.jpg",
+    "/textures/tx02.jpg",
+    "/textures/tx03.jpg",
+  ];
+  // 존재 여부를 미리 체크하지 않고 세팅, 로드 실패 시 CSS 폴백만 보임
+  const i = Math.floor(Math.random()*list.length);
+  return `${list[i]}?rev=${REV}`;
+}
+
+export default function Hero(){
+  const bgUrl = pickTexture();
+
+  const wrap = {
+    position:"relative",
+    width:"100vw", height:"100vh",
   };
 
-  const topGroup = { position:"absolute", top:"7vh", left:"50%", transform:"translateX(-50%)", zIndex:2, padding:"0 16px" };
-  const bottomGroup = { position:"absolute", bottom:"7vh", left:"50%", transform:"translateX(-50%)", zIndex:2, textAlign:"center", padding:"0 16px" };
+  const bg = {
+    position:"absolute", inset:0,
+    backgroundImage: `url('${bgUrl}')`,
+    backgroundSize:"cover",
+    backgroundPosition:"center",
+    filter:"saturate(1.05) contrast(1.05)",
+  };
 
-  // ✅ 두 줄 고정: 각 줄을 block + nowrap, 한국어 단어 쪼개기 금지
-  const copyWrap = { margin:0, textAlign:"center", lineHeight:1.5, fontSize:"clamp(12px,3.2vw,18px)", letterSpacing:"-0.01em" };
+  const topGroup = { position:"absolute", top:"7vh", left:"50%", transform:"translateX(-50%)", zIndex:2, textAlign:"center", padding:"0 16px" };
+  const bottomGroup = { position:"absolute", bottom:"7vh", left:"50%", transform:"translateX(-50%)", zIndex:2, textAlign:"center", padding:"0 16px" };
   const line = { display:"block", whiteSpace:"nowrap", wordBreak:"keep-all" };
 
   return (
-    <>
-      {/* 섹션 A */}
-      <section id="top" style={{ position:"relative", width:"100vw", height:"100vh", overflow:"hidden", background:"#000", textAlign:"center" }}>
-        <video style={videoStyle} autoPlay muted loop playsInline preload="auto" webkit-playsinline="true"
-               onError={(e)=>{ e.currentTarget.style.display='none'; }}>
-          <source src="/videos/bg.mp4" type="video/mp4" />
-        </video>
+    <section id="top" className="kj-texture" style={wrap}>
+      <div style={bg} aria-hidden="true" />
+      {/* 오버레이들은 ::before/::after로 들어감 */}
 
-        <div style={{ position:"absolute", inset:0, background:"rgba(0,0,0,.45)", zIndex:1 }} />
+      <div style={topGroup}>
+        <h1 className="kj-800 kj-softshadow" style={{
+          margin:0, letterSpacing:"-0.02em",
+          fontSize:"clamp(36px, 7vw, 84px)",
+          whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis"
+        }}>KIMIJI STUDIO</h1>
 
-        {/* 상단 타이틀: 한 줄 고정 */}
-        <div style={topGroup}>
-          <h1 className="kj-800" style={{
-            margin:0, letterSpacing:"-0.02em",
-            fontSize:"clamp(34px, 7vw, 72px)",
-            whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis"
-          }}>
-            KIMIJI STUDIO
-          </h1>
-          <p style={{ margin:"8px 0 0 0", fontSize:"clamp(14px,3.2vw,20px)", opacity:.9 }}>
-            일상에서 스튜디오 화보로!
-          </p>
-        </div>
+        <p className="kj-softshadow" style={{ margin:"10px 0 0 0", fontSize:"clamp(14px,3.2vw,22px)" }}>
+          일상에서 스튜디오 화보로!
+        </p>
+      </div>
 
-        {/* 하단 카피: 정확히 2줄 */}
-        <div style={bottomGroup}>
-          <p style={copyWrap}>
-            <span style={line}>사진관에 가지 않아도 <strong>우리 아이의 일상을</strong></span>
-            <span style={line}>스튜디오 사진으로 남길 수 있어요!</span>
-          </p>
-          <a href="#make" className="kj-800"
-             style={{ display:"inline-flex", alignItems:"center", justifyContent:"center",
-                      marginTop:16, padding:"12px 20px", borderRadius:9999,
-                      background:"#fff", color:"#111", boxShadow:"0 6px 18px rgba(0,0,0,.25)" }}>
-            제작하기
-          </a>
-        </div>
-      </section>
+      <div style={bottomGroup}>
+        <p className="kj-softshadow" style={{ margin:0, lineHeight:1.5, fontSize:"clamp(13px,3vw,18px)", letterSpacing:"-0.01em" }}>
+          <span style={line}>사진관에 가지 않아도 <strong>우리 아이의 일상을</strong></span>
+          <span style={line}>스튜디오 사진으로 남길 수 있어요!</span>
+        </p>
 
-      {/* 섹션 B */}
-      <section id="about" style={{ position:"relative", width:"100vw", minHeight:"100vh", overflow:"hidden", background:"#000", textAlign:"center" }}>
-        <video style={videoStyle} autoPlay muted loop playsInline preload="auto" webkit-playsinline="true"
-               onError={(e)=>{ e.currentTarget.style.display='none'; }}>
-          <source src="/videos/bg2.mp4" type="video/mp4" />
-        </video>
-
-        <div style={{ position:"absolute", inset:0, background:"rgba(0,0,0,.35)", zIndex:1 }} />
-
-        <div style={{ position:"relative", zIndex:2, maxWidth:960, margin:"0 auto", padding:"12vh 20px" }}>
-          <h2 className="kj-800" style={{ margin:"0 0 12px 0", whiteSpace:"pre-line", fontSize:"clamp(18px,3vw,32px)" }}>
-            {"KIMIJI STUDIO는 \n단순히 예쁜 이미지를 만드는 곳이 아닙니다."}
-          </h2>
-          <p style={{ whiteSpace:"pre-line", lineHeight:1.6, fontSize:"clamp(14px,2.2vw,20px)" }}>
-{`우리는 기억 속 감정을 꺼내
-그 장면을 새롭게 설계하고,
-다시 복원해내는 '기억의 작가'들 입니다.
-
-그 날, 당신은 무엇을 느꼈고, 
-무엇을 함께 했나요?
-
-그날을 기억하는 아이의 감정과 당신의 시선,
-그 따스한 장면을 바탕으로
-우리는 화보의 씬을 섬세하게 설계합니다.`}
-          </p>
-        </div>
-      </section>
-    </>
+        <a href="#make" className="kj-800"
+           style={{ display:"inline-flex", alignItems:"center", justifyContent:"center",
+                    marginTop:16, padding:"12px 20px", borderRadius:9999,
+                    background:"#fff", color:"#111", boxShadow:"0 6px 18px rgba(0,0,0,.35)" }}>
+          제작하기
+        </a>
+      </div>
+    </section>
   );
 }
