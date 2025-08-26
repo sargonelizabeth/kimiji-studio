@@ -1,33 +1,30 @@
-<!-- 산돌 웹폰트 -->
-<link rel="preconnect" href="https://hmolhy4qpa.execute-api.ap-northeast-2.amazonaws.com" crossorigin />
-<link
-  rel="stylesheet"
-  href="https://hmolhy4qpa.execute-api.ap-northeast-2.amazonaws.com/v1/api/css/drop_fontstream_css/?sid=gAAAAABorBr_uT6Uy4-5TLMEhfp1BPyRHXfpKMa7nKFipQnJ0LmjebuXFb4JDI8rJN52M_lhCk5sEo3sYEEXfAPIQmzWIfxB5WOpmKGbxVcvzWsZczNLh6k2gPfM9ADo57hXI2ZGcXnFrLsGyxC0jw47fcV93_SlzTGiX5n2wHnCmrJmudyRktqwAnqaxOFUh2OaqQwibaQEdUy5YpV-Zkw8tYHjVpIq_QMeoiBucM7jZHdJIWzkoVzh6x8pEQ5fk_POwSVGBnPL&v=lock-bg1"
-  referrerpolicy="origin"
-  crossorigin="anonymous"
-/>
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>KIMIJI STUDIO</title>
 
-<!-- ✅ 부트 잠금: 배경/글자색 + 폰트 400/700 전역 강제 -->
-<style id="sd-boot-lock">
-  html, body, #root { height:100%; }
-  html, body {
-    background:#000 !important;        /* 흰배경 방지 */
-    color:#fff !important;              /* 기본 텍스트 흰색 */
-    margin:0 !important;
-  }
-  /* 작은 글씨 = 400 Sandoll */
-  * {
-    font-family: "Sandoll GothicNeoRound", "Apple SD Gothic Neo", "Noto Sans KR",
-                 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-    font-weight: 400 !important;
-    color: inherit !important;
-  }
-  /* 굵게 써야 하는 곳 */
-  .sd-700 {
-    font-family: "Sandoll GothicNeoRound", "Apple SD Gothic Neo", "Noto Sans KR",
-                 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-    font-weight: 700 !important;
-  }
-  /* 링크 파란색 제거 */
-  a, a:visited, a:hover, a:active { color: inherit !important; text-decoration: none !important; }
-</style>
+    <!-- 산돌 웹폰트: 캐시버스트 파라미터만 유지 -->
+    <link rel="preconnect" href="https://hmolhy4qpa.execute-api.ap-northeast-2.amazonaws.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://hmolhy4qpa.execute-api.ap-northeast-2.amazonaws.com/v1/api/css/drop_fontstream_css/?sid=gAAAAABorBr_uT6Uy4-5TLMEhfp1BPyRHXfpKMa7nKFipQnJ0LmjebuXFb4JDI8rJN52M_lhCk5sEo3sYEEXfAPIQmzWIfxB5WOpmKGbxVcvzWsZczNLh6k2gPfM9ADo57hXI2ZGcXnFrLsGyxC0jw47fcV93_SlzTGiX5n2wHnCmrJmudyRktqwAnqaxOFUh2OaqQwibaQEdUy5YpV-Zkw8tYHjVpIq_QMeoiBucM7jZHdJIWzkoVzh6x8pEQ5fk_POwSVGBnPL&v=stable1"
+      referrerpolicy="origin" crossorigin="anonymous"
+    />
+
+    <!-- 화면이 죽어도 보이는 최소 대비 -->
+    <style>
+      html, body, #root { height: 100%; }
+      body { margin: 0; background: #000; color: #fff; }
+      a { color: inherit; text-decoration: none; }
+      #boot-loading { position: fixed; z-index: 99999; top: 12px; left: 12px; font: 600 14px/1.4 "Sandoll GothicNeoRound", sans-serif; }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <div id="boot-loading">Loading…</div>
+    </div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
