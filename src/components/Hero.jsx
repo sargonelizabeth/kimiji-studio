@@ -30,7 +30,6 @@ export default function Hero() {
       </section>
 
       {/* ── 블록 2: 스토리(소개) 섹션 (bg2.mp4 + 카피) ───────────────────── */}
-      {/* nav의 #community 앵커가 이 블록을 가리키도록 id 유지 */}
       <section id="community" className="hero hero--story">
         <video
           className="hero__bg"
