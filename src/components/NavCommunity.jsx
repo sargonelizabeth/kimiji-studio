@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Nav() {
+export default function NavCommunity() {
   return (
     <nav className="kj-nav">
       <div className="kj-container kj-nav__inner">
@@ -8,7 +8,7 @@ export default function Nav() {
         <div className="kj-nav__links">
           <a href="/#works">포트폴리오</a>
           <a href="/community.html">커뮤니티</a>
-          <a href="/#make">제작하기</a>
+          <a href="/upload.html">업로드</a>
         </div>
       </div>
       <style>{`
