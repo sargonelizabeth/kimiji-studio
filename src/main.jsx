@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
-import './styles/fonts.css';  // @font-face (KIMIJI-NotoKR 600/800)
-import './index.css';         // 전역 규칙
+import './styles/fonts.css';
+import './index.css';
 
 import App from './App.jsx';
 

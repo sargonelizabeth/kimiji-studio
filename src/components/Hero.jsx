@@ -1,22 +1,82 @@
 export default function Hero() {
-  const wrap = {
-    minHeight: "100svh", display: "flex", flexDirection: "column",
-    alignItems: "center", justifyContent: "center", textAlign: "center",
-    padding: "0 16px", gap: 12,
-  };
-  const title = { fontSize: "clamp(36px, 7vw, 72px)", letterSpacing: "-0.02em" };
-  const subtitle = { fontSize: "clamp(14px, 3.2vw, 20px)", opacity: 0.9 };
-  const btn = {
-    marginTop: 16, display: "inline-flex", alignItems: "center", justifyContent: "center",
-    padding: "12px 20px", borderRadius: 9999, background: "#fff", color: "#111",
-    fontSize: "clamp(14px, 2.8vw, 18px)", boxShadow: "0 6px 18px rgba(0,0,0,0.25)",
+  const videoStyle = {
+    position: "absolute", top: "50%", left: "50%",
+    minWidth: "100%", minHeight: "100%",
+    transform: "translate(-50%, -50%)", objectFit: "cover",
   };
 
   return (
-    <section id="top" style={wrap}>
-      <h1 className="kj-800" style={title}>KIMIJI STUDIO</h1>
-      <p style={subtitle}>일상에서 스튜디오 화보로!</p>
-      <a href="#make" className="kj-800" style={btn}>제작하기</a>
-    </section>
+    <>
+      {/* 섹션 A: bg.mp4 */}
+      <section
+        id="top"
+        style={{ position:"relative", width:"100vw", height:"100vh", overflow:"hidden", background:"#000", textAlign:"center" }}
+      >
+        <video
+          style={videoStyle}
+          autoPlay muted loop playsInline preload="auto"
+          // @ts-ignore
+          webkit-playsinline="true"
+        >
+          <source src="/videos/bg.mp4" type="video/mp4" />
+        </video>
+
+        <div style={{ position:"absolute", inset:0, background:"rgba(0,0,0,.45)", zIndex:1 }} />
+
+        {/* 상단 타이틀/부제 */}
+        <div style={{ position:"absolute", top:"7vh", left:"50%", transform:"translateX(-50%)", zIndex:2, padding:"0 16px" }}>
+          <h1 className="kj-800" style={{ margin:0, fontSize:"clamp(36px,7vw,72px)", letterSpacing:"-0.02em" }}>KIMIJI STUDIO</h1>
+          <p style={{ margin:"8px 0 0 0", fontSize:"clamp(14px,3.2vw,20px)", opacity:.9 }}>일상에서 스튜디오 화보로!</p>
+        </div>
+
+        {/* 하단 카피+버튼 */}
+        <div style={{ position:"absolute", bottom:"7vh", left:"50%", transform:"translateX(-50%)", zIndex:2, textAlign:"center", padding:"0 16px" }}>
+          <p style={{ margin:0, whiteSpace:"pre-line", fontSize:"clamp(14px,3.2vw,20px)", opacity:.95 }}>
+            {"사진관에 가지 않아도 우리 아이의 일상을\n스튜디오 사진으로 남길 수 있어요!"}
+          </p>
+          <a href="#make" className="kj-800"
+             style={{ display:"inline-flex", alignItems:"center", justifyContent:"center",
+                      marginTop:16, padding:"12px 20px", borderRadius:9999,
+                      background:"#fff", color:"#111", boxShadow:"0 6px 18px rgba(0,0,0,.25)" }}>
+            제작하기
+          </a>
+        </div>
+      </section>
+
+      {/* 섹션 B: bg2.mp4 + 소개문 */}
+      <section
+        id="about"
+        style={{ position:"relative", width:"100vw", minHeight:"100vh", overflow:"hidden", background:"#000", textAlign:"center" }}
+      >
+        <video
+          style={videoStyle}
+          autoPlay muted loop playsInline preload="auto"
+          // @ts-ignore
+          webkit-playsinline="true"
+        >
+          <source src="/videos/bg2.mp4" type="video/mp4" />
+        </video>
+
+        <div style={{ position:"absolute", inset:0, background:"rgba(0,0,0,.35)", zIndex:1 }} />
+
+        <div style={{ position:"relative", zIndex:2, maxWidth:960, margin:"0 auto", padding:"12vh 20px" }}>
+          <h2 className="kj-800" style={{ margin:"0 0 12px 0", whiteSpace:"pre-line", fontSize:"clamp(18px,3vw,32px)" }}>
+            {"KIMIJI STUDIO는 \n단순히 예쁜 이미지를 만드는 곳이 아닙니다."}
+          </h2>
+          <p style={{ whiteSpace:"pre-line", lineHeight:1.6, fontSize:"clamp(14px,2.2vw,20px)" }}>
+{`우리는 기억 속 감정을 꺼내
+그 장면을 새롭게 설계하고,
+다시 복원해내는 '기억의 작가'들 입니다.
+
+그 날, 당신은 무엇을 느꼈고, 
+무엇을 함께 했나요?
+
+그날을 기억하는 아이의 감정과 당신의 시선,
+그 따스한 장면을 바탕으로
+우리는 화보의 씬을 섬세하게 설계합니다.`}
+          </p>
+        </div>
+      </section>
+    </>
   );
 }

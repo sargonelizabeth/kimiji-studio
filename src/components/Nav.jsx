@@ -11,7 +11,6 @@ export default function Nav() {
   };
   const brand = { fontSize: 20, letterSpacing: "-0.01em", whiteSpace: "nowrap" };
   const menu = { display: "flex", alignItems: "center", gap: 16, fontSize: 14 };
-
   const cta = {
     display: "inline-flex", alignItems: "center", justifyContent: "center",
     padding: "10px 16px", borderRadius: 9999, background: "#fff", color: "#111",
