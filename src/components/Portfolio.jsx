@@ -1,5 +1,6 @@
-// src/components/Portfolio.jsx
-const REV = "r20250826-02"; // 캐시버스터
+// 파일 상단 가까이에 있는 rev 값을 새로 바꿔치기
+const REV = "r20250826-03";  // 예: 현재 시각으로 바꿔도 됨
+
 
 const NAMES = ["p01", "p02", "p03", "p04"];
 

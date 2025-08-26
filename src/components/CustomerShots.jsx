@@ -1,5 +1,6 @@
-// src/components/CustomerShots.jsx
-const REV = "r20250826-02"; // 캐시버스터 변경 시 즉시 갱신
+// 파일 상단 가까이에 있는 rev 값을 새로 바꿔치기
+const REV = "r20250826-03";  // 예: 현재 시각으로 바꿔도 됨
+
 
 // c01~c04를 기본으로 사용
 const NAMES = ["c01", "c02", "c03", "c04"];
