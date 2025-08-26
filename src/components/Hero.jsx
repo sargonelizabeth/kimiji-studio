@@ -44,7 +44,7 @@ export default function Hero() {
         <div
           style={{
             position: "absolute",
-            top: "7vh",                 // 상단 중앙 배치
+            top: "7vh",
             left: "50%",
             transform: "translateX(-50%)",
             textAlign: "center",
@@ -54,29 +54,33 @@ export default function Hero() {
             letterSpacing: "-0.01em",
           }}
         >
-          {/* 타이틀: Sandoll GothicNeoRound 700 */}
+          {/* 타이틀: GothicNeoRound 700 — 모바일 한 줄 보장 */}
           <h1
             style={{
               fontFamily: "Sandoll GothicNeoRound",
               fontWeight: 700,
               margin: 0,
-              lineHeight: 1.08,
+              lineHeight: 1.06,
               textShadow: "0 2px 18px rgba(0,0,0,0.6)",
-              fontSize: "clamp(56px, 9vw, 128px)",
+              fontSize: "clamp(24px, 7.2vw, 128px)",  // 모바일에서 충분히 작게
+              whiteSpace: "nowrap",
+              wordBreak: "keep-all",
             }}
           >
             KIMIJI STUDIO
           </h1>
 
-          {/* 부제: Sandoll GothicNeoRound 400 (타이틀의 1/2 크기 감각) */}
+          {/* 부제: GothicNeoRound 400 — 타이틀의 절반 크기, 한 줄 보장 */}
           <p
             style={{
               fontFamily: "Sandoll GothicNeoRound",
               fontWeight: 400,
-              margin: "12px 0 0 0",
-              lineHeight: 1.15,
+              margin: "10px 0 0 0",
+              lineHeight: 1.12,
               textShadow: "0 2px 14px rgba(0,0,0,0.5)",
-              fontSize: "clamp(28px, 4.5vw, 64px)",
+              fontSize: "clamp(14px, 3.6vw, 48px)",
+              whiteSpace: "nowrap",
+              wordBreak: "keep-all",
             }}
           >
             일상 사진에서 스튜디오 화보로!
@@ -96,38 +100,41 @@ export default function Hero() {
             padding: "0 16px",
           }}
         >
+          {/* 카피: 부제와 같은 크기, 두 줄 강제 */}
           <p
             style={{
               fontFamily: "Sandoll GothicNeoRound",
               fontWeight: 400,
               margin: 0,
-              lineHeight: 1.35,
-              textShadow: "0 2px 12px rgba(0,0,0,0.5)",
-              fontSize: "clamp(16px, 2.4vw, 22px)",
+              lineHeight: 1.3,
               letterSpacing: "-0.01em",
               whiteSpace: "pre-line",
+              wordBreak: "keep-all",
+              textAlign: "center",
+              textShadow: "0 2px 12px rgba(0,0,0,0.5)",
+              fontSize: "clamp(14px, 3.6vw, 48px)",
             }}
           >
-            {"사진관에 가지 않아도,\n우리 아이의 일상을 감성 스튜디오 사진으로 남길 수 있어요!"}
+            {"사진관에 가지 않아도,\n우리 아이의 일상을 감성 스튜디오 사진으로 남길 수 있어요"}
           </p>
 
-          {/* 둥근 "원형" 버튼: Sandoll GothicNeoRound 700 */}
+          {/* 둥근 원형 버튼: GothicNeoRound 700 */}
           <a
             href="#make"
             style={{
               display: "inline-flex",
               alignItems: "center",
               justifyContent: "center",
-              width: "120px",
-              height: "120px",
-              borderRadius: "60px",
-              marginTop: "18px",
+              width: "clamp(80px, 24vw, 120px)",
+              height: "clamp(80px, 24vw, 120px)",
+              borderRadius: "9999px",
+              marginTop: "16px",
               background: "#ffffff",
               color: "#111",
               textDecoration: "none",
               fontFamily: "Sandoll GothicNeoRound",
               fontWeight: 700,
-              fontSize: "18px",
+              fontSize: "clamp(14px, 2.8vw, 18px)",
               letterSpacing: "-0.01em",
               boxShadow: "0 10px 30px rgba(0,0,0,0.25)",
               transition: "transform .25s ease, box-shadow .25s ease",
@@ -146,7 +153,7 @@ export default function Hero() {
         </div>
       </section>
 
-      {/* 섹션 B: bg2.mp4 위에 긴 문장 오버레이 */}
+      {/* 섹션 B: bg2.mp4 위에 긴 문장 (헤드라인 한 줄로 자연스럽게) */}
       <section
         style={{
           position: "relative",
@@ -154,6 +161,7 @@ export default function Hero() {
           minHeight: "100vh",
           overflow: "hidden",
           backgroundColor: "#000",
+          textAlign: "center",
         }}
       >
         <video
@@ -194,23 +202,21 @@ export default function Hero() {
             letterSpacing: "-0.005em",
           }}
         >
-          {/* 헤드라인은 굵게(700) */}
+          {/* 헤드라인: 조금 더 작게 해서 '다.'가 윗줄로 붙도록 */}
           <h2
             style={{
               fontFamily: "Sandoll GothicNeoRound",
               fontWeight: 700,
-              margin: "0 0 18px 0",
-              fontSize: "clamp(24px, 3.4vw, 40px)",
+              margin: "0 0 16px 0",
               lineHeight: 1.15,
+              wordBreak: "keep-all",
               textShadow: "0 2px 16px rgba(0,0,0,0.5)",
-              whiteSpace: "pre-line",
+              fontSize: "clamp(16px, 3.2vw, 32px)", // 이전보다 한 단계 더 작게
             }}
           >
-            {`KIMIJI STUDIO는 
-단순히 예쁜 이미지를 만드는 곳이 아닙니다.`}
+            KIMIJI STUDIO는 단순히 예쁜 이미지를 만드는 곳이 아닙니다.
           </h2>
 
-          {/* 본문은 레귤러(400) */}
           <p
             style={{
               fontFamily: "Sandoll GothicNeoRound",
@@ -218,8 +224,9 @@ export default function Hero() {
               margin: 0,
               whiteSpace: "pre-line",
               lineHeight: 1.65,
-              fontSize: "clamp(16px, 2.1vw, 22px)",
+              fontSize: "clamp(14px, 2.2vw, 22px)",
               textShadow: "0 2px 12px rgba(0,0,0,0.45)",
+              wordBreak: "keep-all",
             }}
           >
             {`우리는 기억 속 감정을 꺼내
