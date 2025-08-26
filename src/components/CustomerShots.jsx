@@ -17,13 +17,15 @@ export default function CustomerShots() {
   const img={ width:"100%", aspectRatio:"4 / 5", objectFit:"cover", display:"block", borderRadius:12, background:"#eee" };
 
   return (
-    <section id="community" className="kj-section kj-surface kj-center">
-      <h3 className="kj-800 kj-title">고객이 보내준 일상 사진</h3>
-      <p className="kj-sub">실제 고객이 휴대폰으로 보낸 원본 일상 사진 샘플</p>
-      <div style={grid}>
-        {shots.map((src,i)=>(
-          <img key={i} src={src} alt={`customer-${i+1}`} style={img} onError={onImgError} loading="lazy" />
-        ))}
+    <section id="community" className="kj-section kj-surface">
+      <div className="kj-container kj-center">
+        <h3 className="kj-800 kj-title">고객이 보내준 일상 사진</h3>
+        <p className="kj-sub">실제 고객이 휴대폰으로 보낸 원본 일상 사진 샘플</p>
+        <div style={grid}>
+          {shots.map((src,i)=>(
+            <img key={i} src={src} alt={`customer-${i+1}`} style={img} onError={onImgError} loading="lazy" />
+          ))}
+        </div>
       </div>
     </section>
   );

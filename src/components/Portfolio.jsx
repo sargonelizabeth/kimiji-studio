@@ -18,12 +18,14 @@ export default function Portfolio() {
   const media={ width:"100%", aspectRatio:"4 / 5", objectFit:"cover", display:"block", background:"#111" };
 
   return (
-    <section id="works" className="kj-section kj-surface kj-center">
-      <h3 className="kj-800 kj-title">포트폴리오</h3>
-      <div style={list}>
-        {works.map((src,i)=>(
-          <figure key={i} style={card}><img src={src} alt={`work-${i+1}`} style={media} onError={onImgError} loading="lazy" /></figure>
-        ))}
+    <section id="works" className="kj-section kj-surface">
+      <div className="kj-container kj-center">
+        <h3 className="kj-800 kj-title">포트폴리오</h3>
+        <div style={list}>
+          {works.map((src,i)=>(
+            <figure key={i} style={card}><img src={src} alt={`work-${i+1}`} style={media} onError={onImgError} loading="lazy" /></figure>
+          ))}
+        </div>
       </div>
     </section>
   );
