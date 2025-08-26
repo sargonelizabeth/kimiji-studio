@@ -1,28 +1,25 @@
-<!DOCTYPE html>
-<html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>KIMIJI STUDIO</title>
+<!-- Sandoll Webfont (그대로 유지, 캐시버스터만 갱신해도 됨) -->
+<link rel="preconnect" href="https://hmolhy4qpa.execute-api.ap-northeast-2.amazonaws.com" crossorigin />
+<link
+  rel="stylesheet"
+  href="https://hmolhy4qpa.execute-api.ap-northeast-2.amazonaws.com/v1/api/css/drop_fontstream_css/?sid=gAAAAABorBr_uT6Uy4-5TLMEhfp1BPyRHXfpKMa7nKFipQnJ0LmjebuXFb4JDI8rJN52M_lhCk5sEo3sYEEXfAPIQmzWIfxB5WOpmKGbxVcvzWsZczNLh6k2gPfM9ADo57hXI2ZGcXnFrLsGyxC0jw47fcV93_SlzTGiX5n2wHnCmrJmudyRktqwAnqaxOFUh2OaqQwibaQEdUy5YpV-Zkw8tYHjVpIq_QMeoiBucM7jZHdJIWzkoVzh6x8pEQ5fk_POwSVGBnPL&v=lock-final"
+  referrerpolicy="origin"
+  crossorigin="anonymous"
+/>
 
-    <!-- Sandoll Webfont -->
-    <link rel="preconnect" href="https://hmolhy4qpa.execute-api.ap-northeast-2.amazonaws.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://hmolhy4qpa.execute-api.ap-northeast-2.amazonaws.com/v1/api/css/drop_fontstream_css/?sid=gAAAAABorBr_uT6Uy4-5TLMEhfp1BPyRHXfpKMa7nKFipQnJ0LmjebuXFb4JDI8rJN52M_lhCk5sEo3sYEEXfAPIQmzWIfxB5WOpmKGbxVcvzWsZczNLh6k2gPfM9ADo57hXI2ZGcXnFrLsGyxC0jw47fcV93_SlzTGiX5n2wHnCmrJmudyRktqwAnqaxOFUh2OaqQwibaQEdUy5YpV-Zkw8tYHjVpIq_QMeoiBucM7jZHdJIWzkoVzh6x8pEQ5fk_POwSVGBnPL&v=domfix3"
-      referrerpolicy="origin"
-      crossorigin="anonymous"
-    />
-
-    <!-- ✅ 응급 패치: 전역 대비 확보 (index.css 안 먹어도 화면 보이게) -->
-    <style>
-      html, body, #root { height:100%; }
-      body { margin:0; background:#000; color:#fff; }
-      a { color:inherit; text-decoration:none; }
-    </style>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
-</html>
+<!-- ✅ 부트 잠금: 문서 로드 직후 Sandoll 400/700 전역 강제 -->
+<style id="sd-font-boot">
+  /* 작은 글씨 = 400 */
+  * {
+    font-family: "Sandoll GothicNeoRound", "Apple SD Gothic Neo", "Noto Sans KR",
+      -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    font-weight: 400 !important;
+    color: inherit;
+  }
+  /* 제목/버튼 등 굵게 쓰는 요소에는 class="sd-700" 만 붙이면 700 */
+  .sd-700 {
+    font-family: "Sandoll GothicNeoRound", "Apple SD Gothic Neo", "Noto Sans KR",
+      -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    font-weight: 700 !important;
+  }
+</style>
