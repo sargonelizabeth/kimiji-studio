@@ -1,6 +1,9 @@
 import Nav from "./components/Nav";
 import Hero from "./components/Hero";
+import CustomerShots from "./components/CustomerShots";
 import Portfolio from "./components/Portfolio";
+import Pricing from "./components/Pricing";
+import SocialBar from "./components/SocialBar";
 import Footer from "./components/Footer";
 
 export default function App() {
@@ -8,9 +11,10 @@ export default function App() {
     <>
       <Nav />
       <Hero />
-      {/* 제작하기 버튼 스크롤 목표 지점 */}
-      <div id="make"></div>
+      <CustomerShots />
       <Portfolio />
+      <Pricing />
+      <SocialBar />
       <Footer />
     </>
   );

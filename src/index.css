@@ -1,13 +1,25 @@
-/* 최소 리셋 + 폰트 기본값 */
+/* 최소 리셋 + 폰트/렌더링 강제 (모바일 포함) */
 html, body, #root { height: 100%; }
 * { box-sizing: border-box; }
+
 body {
   margin: 0;
   background: #000;
   color: #fff;
-  font-family: "Sandoll GothicNeoRound";
-  font-weight: 400;          /* 일반 텍스트는 400 고정 */
+  font-family: "Sandoll GothicNeoRound", "Apple SD Gothic Neo", "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-weight: 400;                  /* 일반 400 */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  -webkit-text-size-adjust: 100%;    /* iOS 자동 확대 방지 */
+  font-synthesis: none;              /* 가짜 Bold/Italic 방지 */
 }
+
 html { scroll-behavior: smooth; }
 a { color: inherit; text-decoration: none; }
 :root { --container-max: 1160px; }
+
+/* 폰트가 끝까지 안 걸릴 때 최후수단 (모바일 포함) */
+h1, h2, h3, h4, p, a, small, button, figcaption, nav, footer, div, span {
+  font-family: "Sandoll GothicNeoRound", "Apple SD Gothic Neo", "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
