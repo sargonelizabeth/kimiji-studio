@@ -1,5 +1,6 @@
+const REV = "r20250826";
 const works = Array.from({ length: 4 }, (_, i) =>
-  `/assets/portfolio/p${String(i + 1).padStart(2, "0")}.jpg`
+  `/assets/portfolio/p${String(i + 1).padStart(2, "0")}.jpg?rev=${REV}`
 );
 
 export default function Portfolio() {
@@ -19,7 +20,8 @@ export default function Portfolio() {
               src={src}
               alt={`work-${i+1}`}
               style={media}
-              onError={(e)=>{ e.currentTarget.style.opacity='0.3'; e.currentTarget.alt='이미지를 불러올 수 없습니다'; }}
+              onError={(e)=>{ e.currentTarget.style.opacity='0.25'; e.currentTarget.alt='이미지를 불러올 수 없습니다'; }}
+              loading="lazy"
             />
           </figure>
         ))}

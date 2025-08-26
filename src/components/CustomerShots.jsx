@@ -1,6 +1,7 @@
-// c01~c04만 사용, 4:5 비율
+// 4장 고정(c01~c04). 배포 캐시 무효화를 위해 ?rev 파라미터 부여.
+const REV = "r20250826";
 const shots = Array.from({ length: 4 }, (_, i) =>
-  `/assets/customers/c${String(i + 1).padStart(2, "0")}.jpg`
+  `/assets/customers/c${String(i + 1).padStart(2, "0")}.jpg?rev=${REV}`
 );
 
 export default function CustomerShots() {
@@ -8,7 +9,6 @@ export default function CustomerShots() {
   const title = { margin: "0 0 12px", fontSize: "clamp(18px, 4vw, 28px)" };
   const desc  = { opacity: .85, fontSize: 12, margin: "0 0 16px" };
 
-  // 2x2 고정 그리드(모바일~PC 일관)
   const grid  = { margin: "0 auto", maxWidth: 520, display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 8 };
   const img   = { width: "100%", aspectRatio: "4 / 5", objectFit: "cover", display: "block", borderRadius: 12, background:"#111" };
 
@@ -23,7 +23,8 @@ export default function CustomerShots() {
             src={src}
             alt={`customer-${i+1}`}
             style={img}
-            onError={(e)=>{ e.currentTarget.style.opacity='0.3'; e.currentTarget.alt='이미지를 불러올 수 없습니다'; }}
+            onError={(e)=>{ e.currentTarget.style.opacity='0.25'; e.currentTarget.alt='이미지를 불러올 수 없습니다'; }}
+            loading="lazy"
           />
         ))}
       </div>

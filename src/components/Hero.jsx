@@ -5,6 +5,16 @@ export default function Hero() {
     transform: "translate(-50%, -50%)", objectFit: "cover",
   };
 
+  const lineWrapFix = {
+    margin: 0,
+    textAlign: "center",
+    // 🇰🇷 한글 단어 중간 줄바꿈 방지
+    wordBreak: "keep-all",
+    lineHeight: 1.5,
+    fontSize: "clamp(14px,3.2vw,20px)",
+    opacity: 0.95
+  };
+
   return (
     <>
       {/* 섹션 A: bg.mp4 */}
@@ -32,8 +42,9 @@ export default function Hero() {
 
         {/* 하단 카피(두 줄 고정) + 버튼 */}
         <div style={{ position:"absolute", bottom:"7vh", left:"50%", transform:"translateX(-50%)", zIndex:2, textAlign:"center", padding:"0 16px" }}>
-          <p style={{ margin:0, whiteSpace:"pre-line", fontSize:"clamp(14px,3.2vw,20px)", opacity:.95 }}>
-            {"사진관에 가지 않아도 우리아이의 일상을\n스튜디오 사진으로 남길 수 있어요!"}
+          <p style={lineWrapFix}>
+            <span style={{ display:"block" }}>사진관에 가지 않아도 <strong>우리 아이의 일상을</strong></span>
+            <span style={{ display:"block" }}>스튜디오 사진으로 남길 수 있어요!</span>
           </p>
           <a href="#make" className="kj-800"
              style={{ display:"inline-flex", alignItems:"center", justifyContent:"center",
