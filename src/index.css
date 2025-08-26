@@ -1,25 +1,55 @@
-/* 최소 리셋 + 폰트/렌더링 강제 (모바일 포함) */
+/* ====== 기본 리셋 + 폰트 강제 ====== */
 html, body, #root { height: 100%; }
 * { box-sizing: border-box; }
+
+:root {
+  /* 👇 드롭된 산돌 CSS의 Response에서 보이는 'font-family' 정확한 문자열로 바꿔도 됨.
+     일단 기본값은 'Sandoll GothicNeoRound' 로 두고,
+     만약 산돌 CSS에 'Sandoll GothicNeoRound 03 Regular' 같은 식으로 나오면
+     아래 값을 그 이름으로 교체하면 된다. */
+  --sd-400: "Sandoll GothicNeoRound";
+  --sd-700: "Sandoll GothicNeoRound";
+}
 
 body {
   margin: 0;
   background: #000;
   color: #fff;
-  font-family: "Sandoll GothicNeoRound", "Apple SD Gothic Neo", "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-weight: 400;                  /* 일반 400 */
+
+  /* 전역 기본 400 */
+  font-family: var(--sd-400), "Apple SD Gothic Neo", "Noto Sans KR",
+               -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-weight: 400;
+
+  /* 모바일 렌더링 안정화 */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-  -webkit-text-size-adjust: 100%;    /* iOS 자동 확대 방지 */
-  font-synthesis: none;              /* 가짜 Bold/Italic 방지 */
+  -webkit-text-size-adjust: 100%;
+  /* 실제 700/400이 내려오면 가짜 Bold를 쓰지 않도록.
+     만약 형님 프로젝트에 700이 포함 안됐다면 'font-synthesis: weight;' 로 바꿔도 됨 */
+  font-synthesis: none;
 }
 
 html { scroll-behavior: smooth; }
 a { color: inherit; text-decoration: none; }
-:root { --container-max: 1160px; }
 
-/* 폰트가 끝까지 안 걸릴 때 최후수단 (모바일 포함) */
-h1, h2, h3, h4, p, a, small, button, figcaption, nav, footer, div, span {
-  font-family: "Sandoll GothicNeoRound", "Apple SD Gothic Neo", "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+/* 전역 강제: 작은 텍스트 포함 모든 요소에 패밀리 우선 강제 */
+h1, h2, h3, h4, p, a, small, button, figcaption, nav, footer, div, span, li {
+  font-family: var(--sd-400), "Apple SD Gothic Neo", "Noto Sans KR",
+               -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
+/* 타이틀/버튼 전용 700 클래스 */
+.sd-700 {
+  font-family: var(--sd-700), var(--sd-400), "Apple SD Gothic Neo",
+               "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  font-weight: 700 !important;
+}
+
+/* 일반 텍스트 400 클래스(명시가 필요할 때) */
+.sd-400 {
+  font-family: var(--sd-400), "Apple SD Gothic Neo", "Noto Sans KR",
+               -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  font-weight: 400 !important;
 }

@@ -8,15 +8,13 @@ export default function Hero() {
 
         {/* 상단 타이틀/부제 */}
         <div style={{ position:"absolute", top:"7vh", left:"50%", transform:"translateX(-50%)", zIndex:2, padding:"0 16px", color:"#fff" }}>
-          <h1 style={{
-            fontFamily:"Sandoll GothicNeoRound", fontWeight:700,
+          <h1 className="sd-700" style={{
             margin:0, lineHeight:1.06, textShadow:"0 2px 18px rgba(0,0,0,.6)",
             fontSize:"clamp(24px, 7.2vw, 128px)", whiteSpace:"nowrap", wordBreak:"keep-all"
           }}>
             KIMIJI STUDIO
           </h1>
-          <p style={{
-            fontFamily:"Sandoll GothicNeoRound", fontWeight:400, /* ← 작은 폰트 400 */
+          <p className="sd-400" style={{
             margin:"10px 0 0 0", lineHeight:1.12, textShadow:"0 2px 14px rgba(0,0,0,.5)",
             fontSize:"clamp(14px, 3.6vw, 48px)", whiteSpace:"nowrap", wordBreak:"keep-all"
           }}>
@@ -26,8 +24,7 @@ export default function Hero() {
 
         {/* 하단 카피 + 버튼 */}
         <div style={{ position:"absolute", bottom:"7vh", left:"50%", transform:"translateX(-50%)", zIndex:2, padding:"0 16px", color:"#fff" }}>
-          <p style={{
-            fontFamily:"Sandoll GothicNeoRound", fontWeight:400, /* ← 작은 폰트 400 */
+          <p className="sd-400" style={{
             margin:0, lineHeight:1.3, letterSpacing:"-0.01em",
             whiteSpace:"pre-line", wordBreak:"keep-all", textAlign:"center",
             textShadow:"0 2px 12px rgba(0,0,0,.5)",
@@ -36,11 +33,10 @@ export default function Hero() {
             {"사진관에 가지 않아도 우리 아이의 일상을\n스튜디오 사진으로 남길 수 있어요."}
           </p>
 
-          <a href="#make" style={{
+          <a href="#make" className="sd-700" style={{
               display:"inline-flex", alignItems:"center", justifyContent:"center",
               width:"clamp(110px, 32vw, 140px)", height:"clamp(110px, 32vw, 140px)", /* ← 최소폭 늘림 */
               borderRadius:"9999px", marginTop:16, background:"#fff", color:"#111", textDecoration:"none",
-              fontFamily:"Sandoll GothicNeoRound", fontWeight:700, /* 버튼은 700 유지 */
               fontSize:"clamp(12px, 2.8vw, 16px)", letterSpacing:"-0.01em", lineHeight:1,
               whiteSpace:"nowrap", /* ← 줄바꿈 금지 */
               boxShadow:"0 10px 30px rgba(0,0,0,.25)", transition:"transform .25s ease, box-shadow .25s ease"

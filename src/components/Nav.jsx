@@ -22,12 +22,13 @@ export default function Nav() {
   return (
     <nav style={wrap}>
       <div style={inner}>
-        <a href="#top" style={brand}>KIMIJI STUDIO</a>
+        <a href="#top" className="sd-700" style={brand}>KIMIJI STUDIO</a>
         <div style={menu}>
           <a href="#works">포트폴리오</a>
           <a href="#community">커뮤니티</a>  {/* ← 변경 완료 */}
           <a
             href="#make"
+            className="sd-700"
             style={cta}
             onMouseEnter={(e)=>{e.currentTarget.style.transform="translateY(-1px)"; e.currentTarget.style.boxShadow="0 10px 24px rgba(0,0,0,0.28)";}}
             onMouseLeave={(e)=>{e.currentTarget.style.transform="translateY(0)"; e.currentTarget.style.boxShadow="0 6px 18px rgba(0,0,0,0.25)";}}

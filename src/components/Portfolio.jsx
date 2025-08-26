@@ -15,13 +15,13 @@ export default function Portfolio() {
 
   return (
     <section id="works" style={section}>
-      <h3 style={title}>포트폴리오</h3>
+      <h3 className="sd-700" style={title}>포트폴리오</h3>
       <div style={list}>
         {works.map((w,i)=>(
           <figure key={i} style={card}><img src={w.src} alt={`work-${i+1}`} style={media}/></figure>
         ))}
       </div>
-      <a href="#more-works" style={more}>더 보러가기</a>
+      <a href="#more-works" className="sd-700" style={more}>더 보러가기</a>
       <div id="more-works" style={{height:1}} />
     </section>
   );

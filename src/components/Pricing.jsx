@@ -12,8 +12,8 @@ export default function Pricing() {
     <section style={wrap}>
       <div style={grid}>
         <div style={box}>
-          <h4 style={name}>스튜디오 사진 3장</h4>
-          <p style={price}>49,000원</p>
+          <h4 className="sd-700" style={name}>스튜디오 사진 3장</h4>
+          <p className="sd-700" style={price}>49,000원</p>
           <p style={small}>보정 포함 · 고해상도 파일 제공</p>
         </div>
         <div style={box}>
