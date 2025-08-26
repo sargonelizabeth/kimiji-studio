@@ -5,13 +5,13 @@ const works = [
 
 export default function Portfolio() {
   const section = { padding:"64px 16px", background:"#000", textAlign:"center" };
-  const title   = { fontFamily:"Sandoll GothicNeoRound", fontWeight:700, fontSize:"clamp(18px,4vw,28px)", margin:"0 0 20px" };
+  const title   = { margin:"0 0 20px", fontSize:"clamp(18px, 4vw, 28px)" };
   const list    = { display:"flex", flexDirection:"column", alignItems:"center", gap:16 };
-  const card    = { width:"min(640px,92vw)", borderRadius:16, overflow:"hidden", background:"#111", boxShadow:"0 8px 24px rgba(0,0,0,.35)" };
+  const card    = { width:"min(640px, 92vw)", borderRadius:16, overflow:"hidden", background:"#111", boxShadow:"0 8px 24px rgba(0,0,0,.35)" };
   const media   = { width:"100%", aspectRatio:"4 / 5", objectFit:"cover", display:"block" };
   const more    = { display:"inline-flex", alignItems:"center", justifyContent:"center",
                     height:44, padding:"0 18px", marginTop:8, borderRadius:9999, background:"#fff", color:"#111",
-                    fontFamily:"Sandoll GothicNeoRound", fontWeight:700, fontSize:14, boxShadow:"0 6px 18px rgba(0,0,0,.25)" };
+                    fontSize:14, boxShadow:"0 6px 18px rgba(0,0,0,.25)" };
 
   return (
     <section id="works" style={section}>

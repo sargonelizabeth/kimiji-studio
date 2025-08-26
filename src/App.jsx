@@ -12,6 +12,8 @@ export default function App() {
       <Nav />
       <Hero />
       <CustomerShots />
+      {/* 제작하기 앵커는 가격으로 스크롤되게 여기서 지정 */}
+      <div id="make"></div>
       <Portfolio />
       <Pricing />
       <SocialBar />
