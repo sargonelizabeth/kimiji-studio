@@ -1,49 +1,34 @@
 export default function Hero() {
   const videoStyle = {
-    position: "absolute", top: "50%", left: "50%",
-    minWidth: "100%", minHeight: "100%",
-    transform: "translate(-50%, -50%)", objectFit: "cover",
-  };
-
-  // 두 줄이 어떤 화면에서도 정확히 2줄로 보이도록: nowrap + 적절한 폰트 사이즈 + 폭 제한
-  const copyWrap = {
-    margin: 0,
-    textAlign: "center",
-    lineHeight: 1.5,
-    fontSize: "clamp(12px, 3.2vw, 18px)", // 모바일에서도 두 줄 유지
-    letterSpacing: "-0.01em",
-  };
-  const line = {
-    display: "block",
-    whiteSpace: "nowrap",     // 단어 중간 줄바꿈 절대 금지
-    wordBreak: "keep-all",    // 한국어 단어 쪼개기 금지
+    position:"absolute", top:"50%", left:"50%", minWidth:"100%", minHeight:"100%",
+    transform:"translate(-50%, -50%)", objectFit:"cover"
   };
 
   const topGroup = { position:"absolute", top:"7vh", left:"50%", transform:"translateX(-50%)", zIndex:2, padding:"0 16px" };
   const bottomGroup = { position:"absolute", bottom:"7vh", left:"50%", transform:"translateX(-50%)", zIndex:2, textAlign:"center", padding:"0 16px" };
 
+  // ✅ 하단 카피: 정확히 2줄, 단어 중간 줄바꿈 금지
+  const copyWrap = { margin:0, textAlign:"center", lineHeight:1.5, fontSize:"clamp(13px,3.2vw,18px)", letterSpacing:"-0.01em" };
+  const line = { display:"block", whiteSpace:"nowrap", wordBreak:"keep-all" };
+
   return (
     <>
-      {/* 섹션 A: bg.mp4 */}
-      <section
-        id="top"
-        style={{ position:"relative", width:"100vw", height:"100vh", overflow:"hidden", background:"#000", textAlign:"center" }}
-      >
-        <video
-          style={videoStyle}
-          autoPlay muted loop playsInline preload="auto"
-          // @ts-ignore
-          webkit-playsinline="true"
-          onError={(e)=>{ e.currentTarget.style.display='none'; }}
-        >
+      {/* 섹션 A */}
+      <section style={{ position:"relative", width:"100vw", height:"100vh", overflow:"hidden", background:"#000", textAlign:"center" }} id="top">
+        <video style={videoStyle} autoPlay muted loop playsInline preload="auto" webkit-playsinline="true"
+               onError={(e)=>{ e.currentTarget.style.display='none'; }}>
           <source src="/videos/bg.mp4" type="video/mp4" />
         </video>
 
         <div style={{ position:"absolute", inset:0, background:"rgba(0,0,0,.45)", zIndex:1 }} />
 
-        {/* 상단 타이틀/부제 */}
+        {/* 상단 타이틀: ✅ 한 줄 고정 */}
         <div style={topGroup}>
-          <h1 className="kj-800" style={{ margin:0, fontSize:"clamp(36px,7vw,72px)", letterSpacing:"-0.02em" }}>
+          <h1 className="kj-800" style={{
+            margin:0, letterSpacing:"-0.02em",
+            fontSize:"clamp(34px, 7vw, 72px)",
+            whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" // ✅
+          }}>
             KIMIJI STUDIO
           </h1>
           <p style={{ margin:"8px 0 0 0", fontSize:"clamp(14px,3.2vw,20px)", opacity:.9 }}>
@@ -51,7 +36,7 @@ export default function Hero() {
           </p>
         </div>
 
-        {/* 하단 카피: 정확히 2줄 */}
+        {/* 하단 카피: ✅ 두 줄 고정 */}
         <div style={bottomGroup}>
           <p style={copyWrap}>
             <span style={line}>사진관에 가지 않아도 <strong>우리 아이의 일상을</strong></span>
@@ -66,18 +51,10 @@ export default function Hero() {
         </div>
       </section>
 
-      {/* 섹션 B: bg2.mp4 */}
-      <section
-        id="about"
-        style={{ position:"relative", width:"100vw", minHeight:"100vh", overflow:"hidden", background:"#000", textAlign:"center" }}
-      >
-        <video
-          style={videoStyle}
-          autoPlay muted loop playsInline preload="auto"
-          // @ts-ignore
-          webkit-playsinline="true"
-          onError={(e)=>{ e.currentTarget.style.display='none'; }}
-        >
+      {/* 섹션 B */}
+      <section id="about" style={{ position:"relative", width:"100vw", minHeight:"100vh", overflow:"hidden", background:"#000", textAlign:"center" }}>
+        <video style={videoStyle} autoPlay muted loop playsInline preload="auto" webkit-playsinline="true"
+               onError={(e)=>{ e.currentTarget.style.display='none'; }}>
           <source src="/videos/bg2.mp4" type="video/mp4" />
         </video>
 
