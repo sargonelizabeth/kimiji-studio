@@ -1,0 +1,28 @@
+header.site-nav:not(:first-of-type){display:none!important}
+.site-nav{
+  --bg-1:rgba(12,12,12,.72);--bg-2:rgba(12,12,12,.52);--white:#fff;--black:#000;--hairline:rgba(255,255,255,.14);
+  position:sticky;top:0;z-index:1000;background:linear-gradient(180deg,var(--bg-1) 0%,var(--bg-2) 100%);
+  backdrop-filter:saturate(140%) blur(14px);-webkit-backdrop-filter:saturate(140%) blur(14px);
+  border-bottom:1px solid var(--hairline);box-shadow:0 8px 30px rgba(0,0,0,.35);font-size:14px;line-height:1.1
+}
+.site-nav .container{max-width:1200px;margin-inline:auto;padding:12px 20px}
+.site-nav .nav-top{display:flex;align-items:center;justify-content:space-between;padding-block:8px}
+.site-nav .brand{color:var(--white);font-weight:900;letter-spacing:.08em;text-decoration:none;font-size:clamp(18px,2vw,22px);padding:6px 8px;border-radius:10px;transition:background .2s}
+.site-nav .brand:hover{background:rgba(255,255,255,.08)}
+.site-nav .login-link{color:var(--white);text-decoration:none;font-weight:700;padding:10px 12px;border-radius:12px;transition:background .2s,transform .18s}
+.site-nav .login-link:hover{background:rgba(255,255,255,.10);transform:translateY(-1px)}
+.site-nav .nav-bottom{padding-block:6px 14px}
+.site-nav .nav-links{list-style:none;display:flex;align-items:center;gap:0;padding:0;margin:0;flex-wrap:wrap}
+.site-nav .nav-links>li{display:flex;align-items:center}
+.site-nav .nav-links>li+li{border-left:1px solid rgba(255,255,255,.18)}
+.site-nav .nav-links>li+li .nav-link,.site-nav .nav-links>li+li .btn{margin-left:10px;padding-left:16px}
+.site-nav .nav-link{position:relative;color:var(--white);text-decoration:none;padding:12px 14px;border-radius:12px;display:inline-block;font-weight:700;transition:background .2s}
+.site-nav .nav-link:hover{background:rgba(255,255,255,.10)}
+.site-nav .nav-link[aria-current="page"]{background:rgba(255,255,255,.14)}
+.site-nav .btn{border:1px solid transparent;padding:12px 16px;border-radius:14px;font-weight:900;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;letter-spacing:.02em;transition:transform .18s,filter .18s,box-shadow .18s}
+.site-nav .btn-cta{background:var(--white);color:var(--black);box-shadow:0 8px 22px rgba(255,255,255,.18)}
+.site-nav .btn-cta:hover{transform:translateY(-1px);filter:brightness(.97);box-shadow:0 12px 28px rgba(255,255,255,.22)}
+@media (max-width:720px){
+  .site-nav .nav-top{padding-bottom:6px}
+  .site-nav .nav-links>li+li .nav-link,.site-nav .nav-links>li+li .btn{padding-left:14px;margin-left:8px}
+}
