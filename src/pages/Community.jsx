@@ -1,130 +1,194 @@
-import React, { useEffect, useState } from "react"
-import SortBar from "@/components/SortBar.jsx"
+import React from "react"
 import { supabase } from "@/lib/supabaseClient.js"
 
 const krw = n => new Intl.NumberFormat("ko-KR",{style:"currency",currency:"KRW"}).format(n||0)
 
-export default function Community() {
-  const [metrics, setMetrics] = useState({ prize_krw: 0, cumulative_krw: 0 })
-  const [sort, setSort] = useState("latest")
-  const [photos, setPhotos] = useState([])
-  const [page, setPage] = useState(0)
-  const [authed, setAuthed] = useState(false)
-  const pageSize = 12
+export default function Community(){
+  const [user, setUser] = React.useState(null)
+  const [metrics, setMetrics] = React.useState({ prize_krw:0, cumulative_krw:0 })
+  const [photos, setPhotos] = React.useState([])
+  const [sort, setSort] = React.useState("latest") // 'latest' | 'popular'
+  const pageSize = 18
+  const fileRef = React.useRef(null)
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data:{ session } }) => setAuthed(!!session?.user))
-    supabase.auth.onAuthStateChange((_e, session) => setAuthed(!!session?.user))
-  }, [])
+  React.useEffect(()=>{
+    supabase.auth.getSession().then(({data:{session}})=>setUser(session?.user??null))
+    const { data } = supabase.auth.onAuthStateChange((_e, session)=>setUser(session?.user??null))
+    return ()=>data?.subscription?.unsubscribe?.()
+  },[])
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const { data } = await supabase
-          .from("site_metrics")
-          .select("prize_krw,cumulative_krw")
-          .eq("id", 1).single()
-        if (data) setMetrics(data)
-      } catch {}
+  React.useEffect(()=>{
+    ;(async()=>{
+      try{
+        const { data } = await supabase.from("site_metrics").select("prize_krw,cumulative_krw").eq("id",1).single()
+        if(data) setMetrics(data)
+      }catch{}
     })()
-  }, [])
+  },[])
 
-  async function loadMore(reset=false){
+  React.useEffect(()=>{ load(true) },[sort])
+
+  async function load(reset=false){
     try{
-      const from = reset ? 0 : page * pageSize
-      const to   = from + pageSize - 1
-      const orderCol = sort === "popular" ? "likes_count" : "created_at"
-      const { data, error } = await supabase
-        .from("v_photos_stats")
-        .select("id,user_id,public_url,caption,created_at,likes_count,comments_count")
-        .order(orderCol,{ascending:false})
-        .range(from,to)
-      if (error) throw error
-      setPhotos(reset ? (data||[]) : [...photos, ...(data||[])])
-      setPage(reset ? 1 : page + 1)
-    }catch{}
+      const order = sort==="popular" ? { table:"photo_likes_count", col:"likes" } : { table:"photos", col:"created_at" }
+      const query = supabase.from("photos").select("id,user_id,public_url,caption,created_at,likes:photo_likes_count!left(count)")
+      let { data } = await query.order(sort==="popular"?"likes":"created_at",{ ascending:false }).limit(pageSize)
+      setPhotos(reset? (data||[]) : [...photos, ...(data||[])])
+    }catch(e){ console.warn("feed load skipped:", e) }
   }
-  useEffect(()=>{ loadMore(true) }, [sort])
 
-  async function ensureAuthRedirect() {
+  // 업로드(내부 버튼 + Nav의 open-upload 이벤트 공유)
+  React.useEffect(()=>{
+    const handler = ()=>{ if(fileRef.current) fileRef.current.click() }
+    window.addEventListener("open-upload", handler)
+    return ()=>window.removeEventListener("open-upload", handler)
+  },[])
+
+  async function handlePick(e){
+    const file = e.target.files?.[0]
+    if(!file) return
     const { data:{ session } } = await supabase.auth.getSession()
-    if (!session?.user) { window.location.href="/signup.html"; return null }
-    return session.user
+    if(!session?.user){ alert("로그인이 필요합니다."); return }
+    const ext = file.name.split('.').pop()||'jpg'
+    const key = `${session.user.id}/${Date.now()}.${ext}`
+
+    // Storage 업로드 (버킷 이름 'photos' 가정)
+    const up = await supabase.storage.from("photos").upload(key, file)
+    if(up.error){ alert("업로드 실패"); return }
+    const { data:{ publicUrl } } = supabase.storage.from("photos").getPublicUrl(key)
+
+    await supabase.from("photos").insert({ user_id: session.user.id, public_url: publicUrl, caption: "" })
+    setPhotos([]); load(true)
   }
 
-  async function onLike(photo_id){
-    const user = await ensureAuthRedirect(); if (!user) return
-    try{
-      const { data:has } = await supabase
-        .from("photo_likes")
-        .select("photo_id").eq("photo_id",photo_id).eq("user_id",user.id).maybeSingle()
-      if (has) await supabase.from("photo_likes").delete().eq("photo_id",photo_id).eq("user_id",user.id)
-      else     await supabase.from("photo_likes").insert({ photo_id, user_id:user.id })
-      loadMore(true)
-    }catch{}
-  }
-
-  async function onComment(photo_id, text){
-    const user = await ensureAuthRedirect(); if (!user) return
-    const body = (text||"").trim(); if (!body) return
-    try{ await supabase.from("photo_comments").insert({ photo_id, user_id:user.id, content:body }); loadMore(true) }catch{}
-  }
+  function toggleSort(next){ if(next!==sort) setSort(next) }
 
   return (
     <section className="community">
+      <input ref={fileRef} type="file" accept="image/*" capture="environment" hidden onChange={handlePick} />
       <div className="kj-container">
+        {/* 상단 지표 */}
         <div className="metrics">
           <div className="row"><div>상금</div><div>{krw(metrics.prize_krw)}</div></div>
           <div className="div" />
           <div className="row"><div>누적 후원 금액</div><div>{krw(metrics.cumulative_krw)}</div></div>
         </div>
 
-        <SortBar sort={sort} onChange={(v)=>{ setPage(0); setSort(v) }} />
-
-        <h2>사진 갤러리</h2>
-        <div className="grid">
-          {photos.map(p => <Card key={p.id} p={p} authed={authed} onLike={onLike} onComment={onComment} />)}
-          {photos.length===0 && <div style={{opacity:.8,padding:"24px 0"}}>아직 업로드가 없어요. 로그인 후 첫 사진을 올려보세요.</div>}
+        {/* 헤더: 제목 + 정렬 텍스트 + 업로드 */}
+        <div className="gallery-head">
+          <h2>사진 갤러리</h2>
+          <div className="right">
+            <div className="sort">
+              <span className={sort==="latest"?"on":""} onClick={()=>toggleSort("latest")}>최신순</span>
+              <span className="sep">|</span>
+              <span className={sort==="popular"?"on":""} onClick={()=>toggleSort("popular")}>인기순</span>
+            </div>
+            <button className="upload" onClick={()=>window.dispatchEvent(new CustomEvent("open-upload"))}>업로드</button>
+          </div>
         </div>
-        <div className="more"><button className="btn" onClick={()=>loadMore(false)}>더 보기</button></div>
+
+        {/* 갤러리 그리드 */}
+        <div className="grid">
+          {photos.map(p => <Card key={p.id} p={p} authed={!!user} />)}
+          {photos.length===0 && <div className="empty">아직 업로드가 없어요. 로그인 후 첫 사진을 올려보세요.</div>}
+        </div>
       </div>
+
       <style>{`
-        .community{padding:32px 16px 48px;color:#fff}
+        .community{padding:28px 16px;color:#fff}
         .kj-container{max-width:980px;margin:0 auto}
-        .metrics{background:rgba(255,255,255,.06);border-radius:16px;padding:16px;box-shadow:0 8px 24px rgba(0,0,0,.2);display:grid;gap:12px;grid-template-rows:auto 1px auto;margin-bottom:16px}
+        .metrics{background:rgba(0,0,0,.30);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:16px;display:grid;gap:12px;grid-template-rows:auto 1px auto;margin-bottom:16px}
         .metrics .row{display:flex;justify-content:space-between;font-weight:800}
-        .div{height:1px;background:rgba(255,255,255,.15);border-radius:1px}
-        .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-        @media(max-width:640px){.grid{grid-template-columns:1fr}}
-        .more{display:flex;justify-content:center;margin-top:12px}
-        .btn{background:#fff;color:#111;border:0;border-radius:999px;padding:10px 18px;font-weight:800;cursor:pointer}
+        .div{height:1px;background:rgba(255,255,255,.18);border-radius:1px}
+
+        .gallery-head{display:flex;align-items:center;justify-content:space-between;margin:10px 0 8px}
+        .gallery-head h2{margin:0;font-size:20px}
+        .right{display:flex;align-items:center;gap:12px}
+        .sort span{opacity:.78;cursor:pointer}
+        .sort .on{opacity:1;font-weight:800}
+        .sort .sep{opacity:.5;margin:0 6px}
+        .upload{background:#fff;color:#000;border:0;border-radius:999px;padding:8px 14px;font-weight:800;cursor:pointer}
+
+        .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:640px){.grid{grid-template-columns:1fr}}
+        .empty{opacity:.85;padding:24px 0}
       `}</style>
     </section>
   )
 }
 
-function Card({ p, authed, onLike, onComment }) {
-  const [text,setText] = React.useState("")
+function Card({ p, authed }){
+  const [liked,setLiked]=React.useState(false)
+  const [count,setCount]=React.useState(0)
+  const [comments,setComments]=React.useState([])
+  const [text,setText]=React.useState("")
+
+  React.useEffect(()=>{ refreshLikes(); refreshComments() },[])
+
+  async function refreshLikes(){
+    try{
+      const { count } = await supabase.from("photo_likes").select("*",{count:"exact",head:true}).eq("photo_id",p.id)
+      setCount(count||0)
+      if(authed){
+        const { data: sess } = await supabase.auth.getSession()
+        const uid = sess?.session?.user?.id
+        if(uid){
+          const { data } = await supabase.from("photo_likes").select("photo_id").eq("photo_id",p.id).eq("user_id",uid).maybeSingle()
+          setLiked(!!data)
+        }
+      } else setLiked(false)
+    }catch(e){ console.warn("likes skipped:", e) }
+  }
+
+  async function refreshComments(){
+    try{
+      const { data } = await supabase.from("photo_comments").select("id,content,created_at").eq("photo_id",p.id).order("created_at",{ascending:true})
+      setComments(data||[])
+    }catch(e){ console.warn("comments skipped:", e) }
+  }
+
+  async function toggleLike(){
+    try{
+      const { data:sess } = await supabase.auth.getSession(); const uid=sess?.session?.user?.id; if(!uid) return;
+      if(liked){ await supabase.from("photo_likes").delete().eq("photo_id",p.id).eq("user_id",uid) }
+      else { await supabase.from("photo_likes").insert({ photo_id:p.id, user_id:uid }) }
+      refreshLikes()
+    }catch(e){ console.warn("like skipped:", e) }
+  }
+
+  async function postComment(e){
+    e.preventDefault()
+    try{
+      const { data:sess } = await supabase.auth.getSession(); const uid=sess?.session?.user?.id; if(!uid || !text.trim()) return;
+      await supabase.from("photo_comments").insert({ photo_id:p.id, user_id:uid, content:text.trim() })
+      setText(""); refreshComments()
+    }catch(e){ console.warn("cmt skipped:", e) }
+  }
+
   return (
     <article className="card">
-      <figure className="frame"><img src={p.public_url} alt={p.caption||"photo"} loading="lazy"/></figure>
+      <figure className="frame">
+        <img src={p.public_url} alt={p.caption||"photo"} loading="lazy"/>
+        <button className={`heart ${liked?"on":""}`} onClick={toggleLike} disabled={!authed}>♥ {count}</button>
+      </figure>
       {p.caption && <p className="cap">{p.caption}</p>}
-      <div className="stat"><span>♥ {p.likes_count}</span><span>💬 {p.comments_count}</span></div>
-      <div className="act"><button className="like" onClick={()=>onLike(p.id)} disabled={!authed}>좋아요</button></div>
       <div className="cmt">
-        <form onSubmit={(e)=>{e.preventDefault(); onComment(p.id, text); setText("")}}>
+        <ul>{comments.map(c=><li key={c.id}>• {c.content}</li>)}</ul>
+        <form onSubmit={postComment}>
           <input value={text} onChange={e=>setText(e.target.value)} placeholder={authed?"댓글 입력":"로그인 필요"} disabled={!authed}/>
           <button disabled={!authed}>등록</button>
         </form>
       </div>
+
       <style>{`
-        .card{background:rgba(255,255,255,.06);border-radius:14px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.2)}
-        .frame{width:100%;aspect-ratio:4/5;background:#111}.frame img{width:100%;height:100%;object-fit:cover;display:block}
-        .cap{margin:8px 10px 0;font-weight:600;color:#fff}
-        .stat{display:flex;gap:10px;padding:6px 10px 0;color:#fff;opacity:.9;font-weight:700}
-        .act{display:flex;justify-content:flex-end;padding:6px 10px 0}
-        .like{border:0;background:#fff;color:#111;border-radius:8px;padding:6px 12px;font-weight:800;cursor:pointer}
-        .cmt{padding:8px 10px 12px}.cmt form{display:flex;gap:6px}
+        .card{background:rgba(0,0,0,.30);border:1px solid rgba(255,255,255,.14);border-radius:14px;overflow:hidden}
+        .frame{position:relative;width:100%;aspect-ratio:4/5;background:#111}
+        .frame img{width:100%;height:100%;object-fit:cover;display:block}
+        .heart{position:absolute;left:10px;bottom:10px;background:rgba(0,0,0,.55);color:#fff;border:0;border-radius:999px;padding:6px 10px;font-weight:800}
+        .heart.on{background:#ff6b6b}
+        .cap{margin:8px 10px 0}
+        .cmt{padding:8px 10px 12px}
+        .cmt ul{list-style:none;margin:0 0 6px;padding:0;display:flex;flex-direction:column;gap:4px}
+        .cmt form{display:flex;gap:6px}
         .cmt input{flex:1;border:1px solid rgba(255,255,255,.25);background:transparent;color:#fff;border-radius:8px;padding:8px}
         .cmt button{border:0;background:#fff;color:#111;border-radius:8px;padding:8px 12px;font-weight:800}
       `}</style>

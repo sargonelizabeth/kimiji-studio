@@ -1,0 +1,14 @@
+.ig-wrap{min-height:100svh;display:grid;place-items:center;background:#000}
+.ig-card{width:min(420px,90vw);background:#111;border:1px solid rgba(255,255,255,.14);border-radius:20px;padding:28px 22px;color:#fff;box-shadow:0 12px 40px rgba(0,0,0,.35)}
+.ig-brand{font-family:'NotoSansKR-ExtraBold',system-ui,Arial;font-size:22px;text-align:center;margin-bottom:6px}
+.ig-sub{opacity:.9;text-align:center;margin-bottom:18px}
+.ig-google{width:100%;display:flex;gap:10px;align-items:center;justify-content:center;background:#fff;color:#111;border:0;border-radius:12px;padding:12px 16px;font-weight:800;cursor:pointer}
+.ig-google:hover{filter:brightness(.96)}
+.ig-divider{display:flex;align-items:center;gap:10px;margin:16px 0}
+.ig-divider:before,.ig-divider:after{content:"";flex:1;height:1px;background:rgba(255,255,255,.14)}
+.ig-divider span{opacity:.7;font-size:12px}
+.ig-form{display:grid;gap:10px}
+.ig-input{width:100%;border:1px solid rgba(255,255,255,.24);background:#111;color:#fff;border-radius:10px;padding:12px 12px;font-size:15px}
+.ig-primary{background:rgba(255,255,255,.10);color:#fff;border:0;border-radius:12px;padding:12px 16px;font-weight:800;cursor:not-allowed}
+.ig-footer{opacity:.85;text-align:center;margin-top:12px}
+.ig-footer a{color:#fff}
