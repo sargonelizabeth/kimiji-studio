@@ -1,14 +1,1 @@
-@font-face {
-  font-family: "KIMIJI-NotoKR";
-  src: url("/fonts/noto/NotoSansKR-SemiBold.ttf") format("truetype");
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "KIMIJI-NotoKR";
-  src: url("/fonts/noto/NotoSansKR-ExtraBold.ttf") format("truetype");
-  font-weight: 800;
-  font-style: normal;
-  font-display: swap;
-}
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@600;800&display=swap');
