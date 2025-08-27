@@ -31,7 +31,10 @@ export default function NavPure(){
       if(!session?.user){ window.location.href="/signup.html"; return }
       if(typeof window.__openUploadPicker === "function"){ window.__openUploadPicker(); return }
       const el = document.getElementById("community-file-input")
-      if(el) el.click()
+      if(el){
+        if(typeof el.showPicker==="function"){ try{ el.showPicker(); return }catch{} }
+        el.click()
+      }
       return
     }
     window.location.href = "/upload.html"
