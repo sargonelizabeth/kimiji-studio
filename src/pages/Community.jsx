@@ -11,14 +11,14 @@ export default function Community(){
   const pageSize = 18
   const fileRef = React.useRef(null)
 
-  // 세션 추적
+  // 세션
   React.useEffect(()=>{
     supabase.auth.getSession().then(({data:{session}})=>setUser(session?.user??null))
     const { data } = supabase.auth.onAuthStateChange((_e, session)=>setUser(session?.user??null))
     return ()=>data?.subscription?.unsubscribe?.()
   },[])
 
-  // 상단 지표
+  // 메트릭
   React.useEffect(()=>{
     ;(async()=>{
       try{
@@ -32,7 +32,7 @@ export default function Community(){
     })()
   },[])
 
-  // 피드 로드
+  // 피드
   React.useEffect(()=>{ load(true) },[sort])
 
   async function load(reset=false){
@@ -45,7 +45,7 @@ export default function Community(){
           .limit(pageSize)
         setPhotos(reset ? (data||[]) : [...photos, ...(data||[])])
       } else {
-        // popular: 좋아요 카운트를 별도 조회 후 클라이언트 정렬(안전/안정)
+        // 인기순: 좋아요 카운트를 따로 가져와서 정렬
         const { data: base } = await supabase
           .from("photos")
           .select("id,user_id,public_url,caption,created_at")
@@ -70,14 +70,21 @@ export default function Community(){
     }catch(e){ console.warn("feed load skipped:", e) }
   }
 
-  // Nav의 업로드 트리거와 연결
+  // Nav/섹션의 "업로드" 트리거 → 로그인 확인 후 파일 선택
   React.useEffect(()=>{
-    const handler = ()=>{ if(fileRef.current) fileRef.current.click() }
+    const handler = async ()=>{
+      const { data:{ session } } = await supabase.auth.getSession()
+      if(!session?.user){
+        window.location.href = "/signup.html"
+        return
+      }
+      fileRef.current?.click()
+    }
     window.addEventListener("open-upload", handler)
     return ()=>window.removeEventListener("open-upload", handler)
   },[])
 
-  // 업로드(앨범에서 1장)
+  // 앨범에서 1장 업로드
   async function handlePick(e){
     const file = e.target.files?.[0]
     if(!file) return
@@ -100,15 +107,22 @@ export default function Community(){
 
     const up = await supabase.storage.from("photos").upload(key, file, { upsert:false })
     if(up.error){
-      alert("업로드 실패")
+      alert("업로드 실패: " + up.error.message)
       e.target.value = ""
       return
     }
 
     const { data:{ publicUrl } } = supabase.storage.from("photos").getPublicUrl(key)
-    await supabase.from("photos").insert({ user_id: session.user.id, public_url: publicUrl, caption: "" })
+    const { error: insErr } = await supabase
+      .from("photos")
+      .insert({ user_id: session.user.id, public_url: publicUrl, caption: "" })
+    if (insErr){
+      alert("DB 저장 실패: " + insErr.message)
+      e.target.value = ""
+      return
+    }
 
-    e.target.value = ""     // 같은 파일 다시 선택 가능
+    e.target.value = ""     // 같은 파일 재선택 가능
     setPhotos([]); load(true)
   }
 
@@ -116,14 +130,8 @@ export default function Community(){
 
   return (
     <section className="community">
-      {/* capture 제거 → 카메라 강제 없음, 사진첩 선택 가능 */}
-      <input
-        ref={fileRef}
-        type="file"
-        accept="image/*"
-        hidden
-        onChange={handlePick}
-      />
+      {/* capture 제거 → 사진첩에서 선택 */}
+      <input ref={fileRef} type="file" accept="image/*" hidden onChange={handlePick} />
 
       <div className="kj-container">
         {/* 상단 지표 */}
@@ -183,10 +191,10 @@ export default function Community(){
 }
 
 function Card({ p, authed }){
-  const [liked,setLiked]     = React.useState(false)
-  const [count,setCount]     = React.useState(0)
+  const [liked,setLiked] = React.useState(false)
+  const [count,setCount] = React.useState(0)
   const [comments,setComments] = React.useState([])
-  const [text,setText]       = React.useState("")
+  const [text,setText] = React.useState("")
 
   React.useEffect(()=>{ refreshLikes(); refreshComments() },[])
 
@@ -210,9 +218,7 @@ function Card({ p, authed }){
             .maybeSingle()
           setLiked(!!data)
         } else setLiked(false)
-      } else {
-        setLiked(false)
-      }
+      } else setLiked(false)
     }catch(e){ console.warn("likes skipped:", e) }
   }
 
