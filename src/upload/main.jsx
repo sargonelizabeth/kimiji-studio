@@ -6,7 +6,8 @@ import UploadPage from '@/pages/Upload.jsx'
 
 import '@/index.css'
 import '@/styles/fonts.css'
-import '@/styles/brand.css'
+import '@/styles/brand.css'      // 마지막
+
 
 function App() {
   return (

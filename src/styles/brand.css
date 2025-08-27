@@ -1,28 +1,22 @@
-:root{--brand-bg:#BE9A60;--black:#000;--white:#fff}
-html,body{background:var(--brand-bg);min-height:100%}
-body{margin:0;color:var(--white)}
-.site-nav{background:#000!important}
-footer,.site-footer{background:#000!important}
-main,#root,section{background:transparent}
+:root {
+  --brand-bg: #BE9A60;
+  --white: #fff;
+  --black: #000;
+  --hairline: rgba(255,255,255,0.12);
+}
 
-/* 폰트 체계 */
-h1,h2,h3,.heading,.brand,.pricing-title{font-family:'NotoSansKR-ExtraBold','Noto Sans KR',sans-serif;font-weight:800}
-body,p,li,a,small,.subtext,.pricing-price{font-family:'NotoSansKR-SemiBold','Noto Sans KR',sans-serif;font-weight:600}
+/* 배경: Nav/푸터만 블랙, 그 외 전역 브랜드 컬러 */
+html, body { background: var(--brand-bg) !important; min-height: 100%; }
+body { margin: 0; color: var(--white); }
 
-/* 중앙 정렬 안전망 */
-main h1,main h2,main h3,main p,.center,.pricing-wrap,.pricing-cta-wrap{text-align:center;margin-left:auto;margin-right:auto}
-img,video{max-width:100%;height:auto;display:block;margin-left:auto;margin-right:auto}
-#portfolio,.customers,.hero,.explain{text-align:center}
+.site-nav, footer, .site-footer { background: #000 !important; }
 
-/* 프라이싱 박스 */
-.pricing-section{padding:48px 16px}
-.pricing-wrap{max-width:1100px}
-.pricing-row{display:grid;grid-template-columns:1fr;gap:16px}
-.pricing-box{width:min(960px,92vw);margin:0 auto;padding:24px;border-radius:16px;background:rgba(0,0,0,.22);border:1px solid rgba(0,0,0,.35);box-shadow:0 10px 26px rgba(0,0,0,.25)}
-.pricing-title{font-size:clamp(20px,2.6vw,28px);margin:0 0 6px}
-.pricing-price{font-size:clamp(18px,2.2vw,24px);margin:0}
+/* 얇은 구분선 - 원하는 곳에 <div class="section-divider"></div> */
+.section-divider {
+  height: 1px;
+  background: var(--hairline);
+  width: min(1100px, 92vw);
+  margin: 24px auto;
+}
 
-/* 하단 공통 CTA */
-.pricing-cta-wrap{padding-top:24px}
-.btn-cta-global{display:inline-flex;align-items:center;justify-content:center;padding:14px 22px;border-radius:14px;background:var(--white);color:var(--black);font-weight:900;text-decoration:none;letter-spacing:.02em;box-shadow:0 8px 22px rgba(255,255,255,.18);transition:transform .18s,filter .18s,box-shadow .18s}
-.btn-cta-global:hover{transform:translateY(-1px);filter:brightness(.97);box-shadow:0 12px 28px rgba(255,255,255,.22)}
+/* 기본 중앙 정렬/버튼 스타일은 기존 그대로 유지 */
