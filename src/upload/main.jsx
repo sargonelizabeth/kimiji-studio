@@ -1,21 +1,23 @@
-import React from 'react'
-import { createRoot } from 'react-dom/client'
+// src/upload/main.jsx
+import React from "react"
+import { createRoot } from "react-dom/client"
 
-import Nav from '@/community/components/Nav.jsx'
-import UploadPage from '@/pages/Upload.jsx'
+import Nav from "@/components/NavPure.jsx"
+import UploadPage from "@/pages/Upload.jsx"
 
-import '@/index.css'
-import '@/styles/fonts.css'
-import '@/styles/brand.css'      // 마지막
+import "@/styles/fonts.css"
+import "@/styles/brand.css"
+import "@/index.css"
 
-
-function App() {
+function UploadEntry(){
   return (
     <>
       <Nav />
-      <UploadPage />
+      <main>
+        <UploadPage />
+      </main>
     </>
   )
 }
 
-createRoot(document.getElementById('root')).render(<App />)
+createRoot(document.getElementById("root")).render(<UploadEntry />)
