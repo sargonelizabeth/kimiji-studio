@@ -9,24 +9,15 @@ function markActiveLink() {
   });
 }
 
-function adjustCTA() {
-  const cta = document.getElementById('nav-cta');
-  if (!cta) return;
-  const path = location.pathname.toLowerCase();
-  const onCommunity = path.endsWith('/community.html') || path.includes('/community');
-  cta.textContent = onCommunity ? '업로드' : '제작하기';
-  cta.href = '/upload.html';
-}
-
 async function setupAuth() {
   const loginLink = document.getElementById('login-link');
   if (!loginLink) return;
 
   const { data: { session } } = await supabase.auth.getSession();
-  renderAuth(session);
-  supabase.auth.onAuthStateChange((_event, next) => renderAuth(next));
+  render(session);
+  supabase.auth.onAuthStateChange((_e, next) => render(next));
 
-  function renderAuth(s) {
+  function render(s) {
     if (s?.user) {
       loginLink.textContent = '로그아웃';
       loginLink.href = '#';
@@ -51,6 +42,5 @@ async function setupAuth() {
 
 window.addEventListener('DOMContentLoaded', () => {
   markActiveLink();
-  adjustCTA();
   setupAuth();
 });
