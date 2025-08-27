@@ -12,7 +12,7 @@ import BgmController from '@/components/BgmController.jsx'
 
 import '@/index.css'                 // 프로젝트 기본 스타일
 import '@/styles/fonts.css'    // 폰트: NotoSansKR-ExtraBold/SemiBold
-import '@/pages/styles/brand.css'    // 이번에 추가: 배경·정렬·버튼·프라이싱 박스
+import '@/styles/brand.css'    // 이번에 추가: 배경·정렬·버튼·프라이싱 박스
 
 function App(){
   return (
