@@ -1,4 +1,3 @@
-// src/components/SortBar.jsx
 export default function SortBar({ sort, onChange }) {
   return (
     <div style={{display:'flex', gap:8, justifyContent:'center', padding:'12px 0'}}>
