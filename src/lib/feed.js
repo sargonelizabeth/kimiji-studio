@@ -1,4 +1,3 @@
-// src/community/lib/feed.js
 import { supabase } from '@/lib/supabaseClient.js'
 
 export async function fetchFeed(sort='latest', limit=100) {
@@ -21,7 +20,10 @@ export async function toggleLike(photo_id, user_id) {
     .maybeSingle()
 
   if (existing) {
-    await supabase.from('photo_likes').delete().eq('photo_id', photo_id).eq('user_id', user_id)
+    await supabase.from('photo_likes')
+      .delete()
+      .eq('photo_id', photo_id)
+      .eq('user_id', user_id)
     return { liked: false }
   }
   await supabase.from('photo_likes').insert({ photo_id, user_id })
