@@ -1,54 +1,62 @@
-/* /src/styles/nav.css */
-:root {
-  --nav-bg: rgba(0, 0, 0, 0.55);
+/* src/styles/nav.css */
+/* 모든 스타일을 .site-nav 내부로 스코프해서 전역 오염 방지 */
+.site-nav {
+  --bg-1: rgba(12, 12, 12, 0.70);
+  --bg-2: rgba(12, 12, 12, 0.50);
   --white: #fff;
   --black: #000;
-  --hairline: rgba(255, 255, 255, 0.08);
-}
+  --hairline: rgba(255, 255, 255, 0.14);
+  --radius: 14px;
 
-.site-nav {
   position: sticky;
   top: 0;
   z-index: 1000;
-  background: var(--nav-bg);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 100%);
+  backdrop-filter: saturate(140%) blur(14px);
+  -webkit-backdrop-filter: saturate(140%) blur(14px);
   border-bottom: 1px solid var(--hairline);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
 }
 
-.container {
+.site-nav .container {
   max-width: 1200px;
   margin-inline: auto;
   padding: 12px 20px;
 }
 
-.nav-top {
+.site-nav .nav-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding-block: 8px;
 }
 
-.brand {
+.site-nav .brand {
   color: var(--white);
-  font-weight: 800;
+  font-weight: 900;
   letter-spacing: 0.08em;
   text-decoration: none;
-  font-size: clamp(16px, 2vw, 20px);
+  font-size: clamp(18px, 2vw, 22px);
+  padding: 6px 8px;
+  border-radius: 10px;
+  transition: background 0.2s ease;
 }
+.site-nav .brand:hover { background: rgba(255,255,255,0.08); }
 
-.login-link {
+.site-nav .login-link {
   color: var(--white);
   text-decoration: none;
-  font-weight: 600;
-  padding: 8px 10px;
-  border-radius: 10px;
+  font-weight: 700;
+  padding: 10px 12px;
+  border-radius: 12px;
+  transition: background 0.2s ease, transform 0.18s ease;
 }
-.login-link:hover { background: rgba(255,255,255,0.10); }
+.site-nav .login-link:hover { background: rgba(255,255,255,0.10); transform: translateY(-1px); }
+.site-nav .login-link:active { transform: translateY(0); }
 
-.nav-bottom { padding-block: 6px 14px; }
+.site-nav .nav-bottom { padding-block: 6px 14px; }
 
-.nav-links {
+.site-nav .nav-links {
   list-style: none;
   display: flex;
   gap: 10px;
@@ -57,40 +65,62 @@
   flex-wrap: wrap;
 }
 
-.nav-link {
+.site-nav .nav-link {
+  position: relative;
   color: var(--white);
   text-decoration: none;
-  padding: 10px 12px;
+  padding: 12px 14px;
   line-height: 1;
-  border-radius: 10px;
+  border-radius: 12px;
   display: inline-block;
-  font-weight: 600;
+  font-weight: 700;
+  transition: background 0.2s ease;
 }
-.nav-link:hover { background: rgba(255,255,255,0.10); }
+.site-nav .nav-link:hover { background: rgba(255,255,255,0.10); }
 
-/* 현재 페이지 표시(커뮤니티 등) */
-.nav-link[aria-current="page"] {
+/* 밑줄 애니메이션 */
+.site-nav .nav-link::after {
+  content: "";
+  position: absolute;
+  left: 12px; right: 12px; bottom: 8px;
+  height: 1.5px;
+  background: rgba(255,255,255,0.0);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.18s ease, background 0.18s ease;
+}
+.site-nav .nav-link:hover::after {
+  background: rgba(255,255,255,0.85);
+  transform: scaleX(1);
+}
+
+/* 현재 페이지 표시 */
+.site-nav .nav-link[aria-current="page"] {
   background: rgba(255,255,255,0.14);
 }
 
 /* CTA 공통 */
-.btn {
+.site-nav .btn {
   border: 1px solid transparent;
-  padding: 10px 14px;
-  border-radius: 12px;
-  font-weight: 800;
+  padding: 12px 16px;
+  border-radius: 14px;
+  font-weight: 900;
   text-decoration: none;
   display: inline-block;
+  letter-spacing: 0.02em;
+  transition: transform 0.18s ease, filter 0.18s ease, box-shadow 0.18s ease;
 }
 
 /* CTA: 화이트 버튼 + 블랙 텍스트 */
-.btn-cta {
+.site-nav .btn-cta {
   background: var(--white);
   color: var(--black);
+  box-shadow: 0 8px 22px rgba(255,255,255,0.18);
 }
-.btn-cta:hover { filter: brightness(0.96); }
+.site-nav .btn-cta:hover { transform: translateY(-1px); filter: brightness(0.97); box-shadow: 0 12px 28px rgba(255,255,255,0.22); }
+.site-nav .btn-cta:active { transform: translateY(0); filter: brightness(0.94); }
 
 @media (max-width: 720px) {
-  .nav-links { row-gap: 8px; }
-  .nav-top { padding-bottom: 6px; }
+  .site-nav .nav-links { row-gap: 8px; }
+  .site-nav .nav-top { padding-bottom: 6px; }
 }
