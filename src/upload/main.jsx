@@ -5,8 +5,8 @@ import Nav from '@/community/components/Nav.jsx'
 import UploadPage from '@/pages/Upload.jsx'
 
 import '@/index.css'
-import '@/pages/styles/fonts.css'
-import '@/pages/styles/brand.css'
+import '@/styles/fonts.css'
+import '@/styles/brand.css'
 
 function App() {
   return (
