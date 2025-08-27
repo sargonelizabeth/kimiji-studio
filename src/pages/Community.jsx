@@ -1,13 +1,14 @@
 import React from "react"
 import { supabase } from "@/lib/supabaseClient.js"
 
+const BUCKET = 'photos' // ← 대시보드의 Bucket ID 로 꼭 바꿔라(예: 'photo' 또는 'PHOTO')
 const krw = n => new Intl.NumberFormat("ko-KR",{style:"currency",currency:"KRW"}).format(n||0)
 
 export default function Community(){
-  const [user, setUser]   = React.useState(null)
+  const [user, setUser] = React.useState(null)
   const [metrics, setMetrics] = React.useState({ prize_krw:0, cumulative_krw:0 })
-  const [photos, setPhotos]   = React.useState([])
-  const [sort, setSort]       = React.useState("latest") // 'latest' | 'popular'
+  const [photos, setPhotos] = React.useState([])
+  const [sort, setSort] = React.useState("latest") // 'latest' | 'popular'
   const pageSize = 18
   const fileRef = React.useRef(null)
 
@@ -45,12 +46,10 @@ export default function Community(){
           .limit(pageSize)
         setPhotos(reset ? (data||[]) : [...photos, ...(data||[])])
       } else {
-        // 인기순: like 카운트 결합 후 정렬
         const { data: base } = await supabase
           .from("photos")
           .select("id,user_id,public_url,caption,created_at")
           .limit(pageSize * 2)
-
         const ids = (base||[]).map(p=>p.id)
         let likeMap = {}
         if (ids.length){
@@ -64,13 +63,12 @@ export default function Community(){
           .slice()
           .sort((a,b)=>(likeMap[b.id]||0)-(likeMap[a.id]||0))
           .slice(0, pageSize)
-
         setPhotos(reset ? sorted : [...photos, ...sorted])
       }
     }catch(e){ console.warn("feed load skipped:", e) }
   }
 
-  // 업로드 버튼(섹션) → 세션 가드 후 파일 선택 **직접 호출**
+  // 업로드 버튼(섹션) → 세션 가드 후 파일 선택 직접 클릭
   async function onUploadClick(e){
     e.preventDefault()
     const { data:{ session } } = await supabase.auth.getSession()
@@ -78,7 +76,6 @@ export default function Community(){
       window.location.href = "/signup.html"
       return
     }
-    // 사파리/모바일: 프로그램 클릭은 "직접 클릭 핸들러"에서만 허용
     fileRef.current?.click()
   }
 
@@ -86,41 +83,24 @@ export default function Community(){
   async function handlePick(e){
     const file = e.target.files?.[0]
     if(!file) return
-
     if (!file.type || !file.type.startsWith("image/")){
-      alert("이미지 파일만 선택해주세요.")
-      e.target.value = ""
-      return
+      alert("이미지 파일만 선택해주세요."); e.target.value = ""; return
     }
-
     const { data:{ session } } = await supabase.auth.getSession()
-    if(!session?.user){
-      alert("로그인이 필요합니다.")
-      e.target.value = ""
-      return
-    }
+    if(!session?.user){ alert("로그인이 필요합니다."); e.target.value = ""; return }
 
     const ext = (file.name.split(".").pop()||"jpg").toLowerCase()
     const key = `${session.user.id}/${Date.now()}.${ext}`
 
-    const up = await supabase.storage.from("photos").upload(key, file, { upsert:false })
-    if(up.error){
-      alert("업로드 실패: " + up.error.message)
-      e.target.value = ""
-      return
-    }
+    const up = await supabase.storage.from(BUCKET).upload(key, file, { upsert:false })
+    if(up.error){ alert("업로드 실패: " + up.error.message); e.target.value = ""; return }
 
-    const { data:{ publicUrl } } = supabase.storage.from("photos").getPublicUrl(key)
-    const { error: insErr } = await supabase
-      .from("photos")
+    const { data:{ publicUrl } } = supabase.storage.from(BUCKET).getPublicUrl(key)
+    const { error: insErr } = await supabase.from("photos")
       .insert({ user_id: session.user.id, public_url: publicUrl, caption: "" })
-    if (insErr){
-      alert("DB 저장 실패: " + insErr.message)
-      e.target.value = ""
-      return
-    }
+    if (insErr){ alert("DB 저장 실패: " + insErr.message); e.target.value = ""; return }
 
-    e.target.value = ""     // 같은 파일 재선택 가능
+    e.target.value = "" // 같은 파일 재선택 가능
     setPhotos([]); load(true)
   }
 
@@ -128,13 +108,13 @@ export default function Community(){
 
   return (
     <section className="community">
-      {/* 시각적으로 숨김(클릭 허용), hidden 속성 사용 금지 */}
+      {/* hidden/visibility:none 금지: 시각적 숨김만 적용 */}
       <input
         id="community-file-input"
         ref={fileRef}
         type="file"
         accept="image/*"
-        style={{position:"fixed", top:-9999, left:-9999, width:1, height:1, opacity:0, pointerEvents:"none"}}
+        style={{position:"absolute", top:0, left:0, width:1, height:1, opacity:0}}
         onChange={handlePick}
         aria-hidden="true"
         tabIndex={-1}
