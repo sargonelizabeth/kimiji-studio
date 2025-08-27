@@ -1,3 +1,4 @@
+// src/lib/supabaseClient.js
 import { createClient } from '@supabase/supabase-js'
 
 const url = import.meta.env.VITE_SUPABASE_URL
@@ -6,15 +7,15 @@ const key = import.meta.env.VITE_SUPABASE_ANON_KEY
 function noop() {
   return {
     select: () => noop(),
-    order: () => noop(),
-    range: async () => ({ data: [], error: null }),
-    eq: () => noop(),
+    order:  () => noop(),
+    range:  async () => ({ data: [], error: null }),
+    eq:     () => noop(),
     single: async () => ({ data: null, error: null }),
     maybeSingle: async () => ({ data: null, error: null }),
     insert: async () => ({ data: null, error: { message: 'noop' } }),
     delete: async () => ({ data: null, error: { message: 'noop' } }),
     update: async () => ({ data: null, error: { message: 'noop' } }),
-    limit: async () => ({ data: [], error: null })
+    limit:  async () => ({ data: [], error: null })
   }
 }
 
