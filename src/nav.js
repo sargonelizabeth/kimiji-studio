@@ -1,5 +1,7 @@
 // /src/nav.js
-import { supabase } from '/src/supabaseClient.js'; // 프로젝트 경로에 맞게 유지
+- import { supabase } from '/src/supabaseClient.js';
++ import { supabase } from './supabaseClient.js';
+
 
 // ----- [A] 로그인 토글 (텍스트 링크 유지: 흰 글씨) -----
 const loginLink = document.getElementById('login-link');
