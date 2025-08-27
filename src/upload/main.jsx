@@ -1,15 +1,20 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import { AuthProvider } from "../providers/AuthProvider.jsx";
-import UploadPage from "../pages/Upload.jsx";
-import NavCommunity from "../components/NavCommunity.jsx";
-import "../index.css";
+import React from 'react'
+import { createRoot } from 'react-dom/client'
 
-ReactDOM.createRoot(document.getElementById("root")).render(
-  <AuthProvider>
+import Nav from '@/community/components/Nav.jsx'
+import UploadPage from '@/pages/home/Upload.jsx'
+
+import '@/index.css'
+import '@/pages/styles/fonts.css'
+import '@/pages/styles/brand.css'
+
+function App() {
+  return (
     <>
-      <NavCommunity />
+      <Nav />
       <UploadPage />
     </>
-  </AuthProvider>
-);
+  )
+}
+
+createRoot(document.getElementById('root')).render(<App />)
