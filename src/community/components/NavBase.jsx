@@ -1,11 +1,6 @@
-const onAuth = async (e) => {
-  e.preventDefault()
-  if (user) {
-    await supabase.auth.signOut()
-    window.location.reload()
-  } else {
-    window.location.href = '/signup.html'
-  }
-}
+import React from "react"
+import NavPure from "@/components/NavPure.jsx"
 
-export default NavBase;
+// 옛 import 경로 호환: 어디서 NavBase를 불러도 NavPure가 렌더됨
+export function NavBase(props){ return <NavPure {...props} /> }
+export default NavBase
