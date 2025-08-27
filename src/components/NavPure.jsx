@@ -16,17 +16,25 @@ export default function NavPure({ ctaLabel = "제작하기", ctaHref = "/upload.
       await supabase.auth.signOut()
       window.location.reload()
     } else {
-      // 회원가입/로그인 진입
       window.location.href = "/signup.html"
     }
   }
 
-  const onCTA = (e) => {
-    // 커뮤니티에서 CTA가 '업로드'일 때는 페이지 이동 대신 업로드 모달 트리거
+  // ★ 여기 수정: 커뮤니티 업로드는 직접 파일 인풋 클릭
+  const onCTA = async (e) => {
     if (ctaLabel === "업로드" && location.pathname.includes("community.html")) {
       e.preventDefault()
-      window.dispatchEvent(new CustomEvent("open-upload"))
+      const { data:{ session } } = await supabase.auth.getSession()
+      if (!session?.user) { window.location.href = "/signup.html"; return }
+      const el = document.getElementById("community-file-input")
+      if (el) el.click()
+      else window.location.href = "/upload.html" // 폴백
+      return
     }
+    // 일반 CTA
+    // (홈 등에서는 그냥 이동)
+    // e.g. 제작하기 → /upload.html
+    // 앵커 태그 기본 동작 유지
   }
 
   return (

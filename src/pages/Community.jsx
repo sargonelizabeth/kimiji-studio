@@ -11,14 +11,14 @@ export default function Community(){
   const pageSize = 18
   const fileRef = React.useRef(null)
 
-  // 세션
+  // 세션 추적
   React.useEffect(()=>{
     supabase.auth.getSession().then(({data:{session}})=>setUser(session?.user??null))
     const { data } = supabase.auth.onAuthStateChange((_e, session)=>setUser(session?.user??null))
     return ()=>data?.subscription?.unsubscribe?.()
   },[])
 
-  // 메트릭
+  // 상단 지표
   React.useEffect(()=>{
     ;(async()=>{
       try{
@@ -32,7 +32,7 @@ export default function Community(){
     })()
   },[])
 
-  // 피드
+  // 피드 로드
   React.useEffect(()=>{ load(true) },[sort])
 
   async function load(reset=false){
@@ -45,7 +45,7 @@ export default function Community(){
           .limit(pageSize)
         setPhotos(reset ? (data||[]) : [...photos, ...(data||[])])
       } else {
-        // 인기순: 좋아요 카운트를 따로 가져와서 정렬
+        // 인기순: like 카운트 결합 후 정렬
         const { data: base } = await supabase
           .from("photos")
           .select("id,user_id,public_url,caption,created_at")
@@ -70,19 +70,17 @@ export default function Community(){
     }catch(e){ console.warn("feed load skipped:", e) }
   }
 
-  // Nav/섹션의 "업로드" 트리거 → 로그인 확인 후 파일 선택
-  React.useEffect(()=>{
-    const handler = async ()=>{
-      const { data:{ session } } = await supabase.auth.getSession()
-      if(!session?.user){
-        window.location.href = "/signup.html"
-        return
-      }
-      fileRef.current?.click()
+  // 업로드 버튼(섹션) → 세션 가드 후 파일 선택 **직접 호출**
+  async function onUploadClick(e){
+    e.preventDefault()
+    const { data:{ session } } = await supabase.auth.getSession()
+    if(!session?.user){
+      window.location.href = "/signup.html"
+      return
     }
-    window.addEventListener("open-upload", handler)
-    return ()=>window.removeEventListener("open-upload", handler)
-  },[])
+    // 사파리/모바일: 프로그램 클릭은 "직접 클릭 핸들러"에서만 허용
+    fileRef.current?.click()
+  }
 
   // 앨범에서 1장 업로드
   async function handlePick(e){
@@ -130,8 +128,17 @@ export default function Community(){
 
   return (
     <section className="community">
-      {/* capture 제거 → 사진첩에서 선택 */}
-      <input ref={fileRef} type="file" accept="image/*" hidden onChange={handlePick} />
+      {/* 시각적으로 숨김(클릭 허용), hidden 속성 사용 금지 */}
+      <input
+        id="community-file-input"
+        ref={fileRef}
+        type="file"
+        accept="image/*"
+        style={{position:"fixed", top:-9999, left:-9999, width:1, height:1, opacity:0, pointerEvents:"none"}}
+        onChange={handlePick}
+        aria-hidden="true"
+        tabIndex={-1}
+      />
 
       <div className="kj-container">
         {/* 상단 지표 */}
@@ -150,7 +157,7 @@ export default function Community(){
               <span className="sep">|</span>
               <span className={sort==="popular"?"on":""} onClick={()=>toggleSort("popular")}>인기순</span>
             </div>
-            <button className="upload" onClick={()=>window.dispatchEvent(new CustomEvent("open-upload"))}>업로드</button>
+            <button className="upload" onClick={onUploadClick}>업로드</button>
           </div>
         </div>
 
