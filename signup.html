@@ -7,6 +7,29 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+!function(){
+  function show(label, obj){
+    try{
+      var msg = (obj && (obj.stack || obj.message || obj)) + '';
+      var el = document.createElement('pre');
+      el.id = 'fatal-overlay';
+      el.textContent = label + '\n' + msg;
+      Object.assign(el.style, {
+        position:'fixed', left:0, right:0, bottom:0, maxHeight:'45vh',
+        overflow:'auto', background:'rgba(0,0,0,.88)', color:'#fff',
+        padding:'12px', margin:0, zIndex:99999, whiteSpace:'pre-wrap',
+        font:'12px ui-monospace,Menlo,monospace'
+      });
+      document.body.appendChild(el);
+    }catch(_){}
+  }
+  window.addEventListener('error', e => show('FATAL ERROR:', e.error || e.message));
+  window.addEventListener('unhandledrejection', e => show('UNHANDLED REJECTION:', e.reason || e));
+  console.log('[BOOT] global guard ready');
+}();
+</script>
+
     <script type="module" src="/src/pages/auth/signup/main.jsx"></script>
   </body>
 </html>
