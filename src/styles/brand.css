@@ -1,22 +1,5 @@
-:root {
-  --brand-bg: #BE9A60;
-  --white: #fff;
-  --black: #000;
-  --hairline: rgba(255,255,255,0.12);
-}
-
-/* 배경: Nav/푸터만 블랙, 그 외 전역 브랜드 컬러 */
-html, body { background: var(--brand-bg) !important; min-height: 100%; }
-body { margin: 0; color: var(--white); }
-
-.site-nav, footer, .site-footer { background: #000 !important; }
-
-/* 얇은 구분선 - 원하는 곳에 <div class="section-divider"></div> */
-.section-divider {
-  height: 1px;
-  background: var(--hairline);
-  width: min(1100px, 92vw);
-  margin: 24px auto;
-}
-
-/* 기본 중앙 정렬/버튼 스타일은 기존 그대로 유지 */
+:root{--brand-bg:#BE9A60;--white:#fff;--black:#000;--hairline:rgba(255,255,255,.12)}
+html,body{background:var(--brand-bg)!important;min-height:100%}
+body{margin:0;color:var(--white)}
+.site-nav, footer, .site-footer{background:#000!important}
+.section-divider{height:1px;background:var(--hairline);width:min(1100px,92vw);margin:24px auto}
