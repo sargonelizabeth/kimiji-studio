@@ -7,3 +7,5 @@ const onAuth = async (e) => {
     window.location.href = '/signup.html'
   }
 }
+
+export default NavBase;
