@@ -1,4 +1,3 @@
-// src/components/NavPure.jsx
 import React from "react"
 import { supabase } from "@/lib/supabaseClient.js"
 
@@ -17,7 +16,7 @@ export default function NavPure(){
     e.preventDefault()
     await supabase.auth.signInWithOAuth({
       provider:"google",
-      options:{ redirectTo: `${window.location.origin}/community.html` }
+      options:{ redirectTo: `${window.location.origin}/community.html`, queryParams: { prompt: "select_account" } }
     })
   }
   async function onLogout(e){
@@ -26,16 +25,16 @@ export default function NavPure(){
     window.location.reload()
   }
 
-  async function onCTA(e){
+  async function onCTA(){
     if(isCommunity){
-      e.preventDefault()
       const { data:{ session } } = await supabase.auth.getSession()
       if(!session?.user){ window.location.href="/signup.html"; return }
-      document.getElementById("community-file-input")?.click() // 커뮤니티 섹션의 input 호출
+      if(typeof window.__openUploadPicker === "function"){ window.__openUploadPicker(); return }
+      const el = document.getElementById("community-file-input")
+      if(el) el.click()
       return
     }
-    // 홈/기타: 업로드 페이지로 이동
-    // a 태그 기본동작 유지
+    window.location.href = "/upload.html"
   }
 
   return (
@@ -53,13 +52,7 @@ export default function NavPure(){
           <li><a href="/community.html" className="nav-link">커뮤니티</a></li>
           <li><a href="/#about"      className="nav-link">About</a></li>
         </ul>
-        <a
-          href={isCommunity ? "#" : "/upload.html"}
-          className="btn-cta"
-          onClick={onCTA}
-        >
-          {ctaLabel}
-        </a>
+        <button type="button" className="btn-cta" onClick={onCTA}>{ctaLabel}</button>
       </nav>
 
       <style>{`
@@ -73,19 +66,15 @@ export default function NavPure(){
         .brand{color:#fff;text-decoration:none;font-weight:800;letter-spacing:.08em;font-size:18px}
         .login{color:#fff;text-decoration:none;font-weight:700;padding:8px 10px;border-radius:10px}
         .login:hover{background:rgba(255,255,255,.10)}
-        .nav-bottom{
-          display:flex;align-items:center;gap:12px;
-          padding:6px 20px 14px
-        }
+        .nav-bottom{display:flex;align-items:center;gap:12px;padding:6px 20px 14px}
         .links{display:flex;gap:10px;list-style:none;margin:0;padding:0;flex:1}
         .nav-link{color:#fff;text-decoration:none;padding:10px 12px;border-radius:10px;font-weight:700;line-height:1;display:inline-flex;align-items:center;height:40px}
         .nav-link:hover{background:rgba(255,255,255,.10)}
         .btn-cta{
-          background:#fff;color:#000;text-decoration:none;
+          background:#fff;color:#000;border:1px solid transparent;
           border-radius:12px;font-weight:800;
           display:inline-flex;align-items:center;justify-content:center;
-          padding:0 16px;height:40px;min-width:108px; /* 과하게 커지지 않게 고정 */
-          border:1px solid transparent
+          padding:0 16px;height:40px;min-width:108px;cursor:pointer
         }
         .btn-cta:hover{filter:brightness(.96)}
         @media (max-width:720px){
