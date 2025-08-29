@@ -1,23 +1,24 @@
-// src/pages/Upload.jsx (예시)
+// src/pages/Upload.jsx
 import React from 'react'
-import { supabase } from '@/lib/supabaseClient.js'
-const BUCKET = 'photo'
+import { createRoot } from 'react-dom/client'
+import Nav from '@/components/Nav.jsx'
+import '@/index.css'
 
-export default function UploadPage(){
-  const [busy,setBusy] = React.useState(false)
-  async function onPick(e){
-    const file = e.target.files?.[0]; if(!file) return;
-    setBusy(true)
-    const { data:{ session } } = await supabase.auth.getSession()
-    if(!session?.user){ setBusy(false); return; }
-
-    const ext=(file.name.split('.').pop()||'jpg').toLowerCase()
-    const path=`${session.user.id}/${Date.now()}.${ext}`
-    const { error:upErr }=await supabase.storage.from(BUCKET).upload(path,file,{upsert:false,cacheControl:"3600"})
-    if(upErr){ setBusy(false); return; }
-    const { data:pub }=supabase.storage.from(BUCKET).getPublicUrl(path)
-    await supabase.from("photos").insert({ user_id:session.user.id, public_url:pub.publicUrl, caption:null })
-    setBusy(false)
-  }
-  return <input type="file" accept="image/*" onChange={onPick} disabled={busy}/>
+function UploadPage(){
+  React.useEffect(()=>{
+    // Nav와 동일한 이벤트를 재사용
+    window.dispatchEvent(new CustomEvent('open-upload'))
+    // 커뮤니티로 돌아가도 동일하게 작동하도록
+    const t = setTimeout(()=>{ window.location.href = '/community.html' }, 1200)
+    return ()=>clearTimeout(t)
+  },[])
+  return (
+    <>
+      <Nav />
+      <main style={{padding:'24px',color:'#fff'}}>업로드를 준비중입니다…</main>
+    </>
+  )
 }
+export default UploadPage
+
+createRoot(document.getElementById('root')).render(<UploadPage />)
