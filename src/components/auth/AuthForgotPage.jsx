@@ -1,48 +1,39 @@
-// src/components/auth/AuthForgotPage.jsx
-import React from 'react'
-import { supabase } from '@/lib/supabaseClient.js'
+import React from "react";
+import { supabase } from "@/lib/supabaseClient.js";
 
 export default function AuthForgotPage(){
-  const [email,setEmail]=React.useState('')
-  const [busy,setBusy]=React.useState(false)
-  const [done,setDone]=React.useState(false)
+  const [email,setEmail]=React.useState("");
+  const [busy,setBusy]=React.useState(false);
+  const cb = `${window.location.origin}/auth/reset.html`;
 
-  async function onSend(e){
-    e.preventDefault()
-    if(!email) return
-    setBusy(true)
-    const redirectTo = `${location.origin}/login.html`
-    const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo })
-    setBusy(false)
-    if(error){ alert(error.message||'메일 전송 실패'); return }
-    setDone(true)
+  async function send(e){
+    e.preventDefault(); setBusy(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email,{ redirectTo: cb });
+    setBusy(false);
+    if(error) return alert(error.message);
+    alert("재설정 메일을 보냈습니다.");
   }
 
   return (
-    <section className="auth-card-wrap">
-      <div className="auth-card">
-        <h1 className="auth-title">아이디/비밀번호 찾기</h1>
-        {done ? (
-          <p>재설정 메일을 보냈어요. 메일함을 확인해주세요.</p>
-        ) : (
-          <form onSubmit={onSend} className="auth-form">
-            <label className="lbl">가입 이메일
-              <input type="email" value={email} onChange={e=>setEmail(e.target.value)} required />
-            </label>
-            <button className="btn-primary" disabled={busy}>{busy?'전송 중...':'재설정 메일 보내기'}</button>
-          </form>
-        )}
-      </div>
-      <style>{`
-        .auth-card-wrap{display:flex;justify-content:center;padding:80px 16px}
-        .auth-card{width:100%;max-width:520px;background:#111;border:1px solid rgba(255,255,255,.14);
-          border-radius:18px;color:#fff;padding:20px}
-        .auth-title{margin:0 0 12px}
-        .auth-form{display:flex;flex-direction:column;gap:12px}
-        .lbl{display:flex;flex-direction:column;gap:6px}
-        .lbl input{border:1px solid rgba(255,255,255,.25);background:transparent;color:#fff;border-radius:10px;padding:10px}
-        .btn-primary{border:0;background:#fff;color:#111;border-radius:999px;padding:12px 18px;font-weight:800}
-      `}</style>
-    </section>
-  )
+    <main className="auth-wrap">
+      <section className="card">
+        <h1>아이디/비밀번호 찾기</h1>
+        <form onSubmit={send}>
+          <label>가입 이메일<input type="email" value={email} onChange={e=>setEmail(e.target.value)} required/></label>
+          <button disabled={busy}>{busy?"전송 중...":"재설정 메일 보내기"}</button>
+        </form>
+        <div className="links"><a href="/auth/login.html">로그인으로 돌아가기</a></div>
+      </section>
+      <style>{baseAuthCss}</style>
+    </main>
+  );
 }
+
+const baseAuthCss = `
+.auth-wrap{min-height:calc(100vh - 64px);padding:24px 16px;color:#fff;background:#000}
+.card{max-width:520px;margin:0 auto;background:#111;border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:22px}
+label{display:block;margin:10px 0 6px}
+input{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,.2);background:#000;color:#fff}
+button{width:100%;margin-top:12px;border:0;border-radius:999px;padding:12px 16px;background:#fff;color:#111;font-weight:900}
+.links{margin-top:14px;text-align:center}
+`;
