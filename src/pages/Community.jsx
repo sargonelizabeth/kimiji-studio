@@ -1,26 +1,28 @@
+// src/pages/Community.jsx
 import React from "react"
 import { supabase } from "@/lib/supabaseClient.js"
 
-const BUCKET = "photo" // Storage Buckets의 ID (소문자 photo)
+const BUCKET = 'photo' // 스토리지 버킷은 photo(단수) 그대로 사용
 const krw = n => new Intl.NumberFormat("ko-KR",{style:"currency",currency:"KRW"}).format(n||0)
 
 export default function Community(){
-  const [user, setUser]   = React.useState(null)
+  const [user, setUser] = React.useState(null)
   const [metrics, setMetrics] = React.useState({ prize_krw:0, cumulative_krw:0 })
-  const [photos, setPhotos]   = React.useState([])
+  const [photos, setPhotos] = React.useState([])
+  const [sort, setSort] = React.useState("latest") // 'latest' | 'popular'
   const pageSize = 18
   const fileRef = React.useRef(null)
 
   // 세션
   React.useEffect(()=>{
     supabase.auth.getSession().then(({data:{session}})=>setUser(session?.user??null))
-    const { data:sub } = supabase.auth.onAuthStateChange((_e,s)=>setUser(s?.user??null))
-    return ()=>sub?.subscription?.unsubscribe?.()
+    const { data } = supabase.auth.onAuthStateChange((_e, session)=>setUser(session?.user??null))
+    return ()=>data?.subscription?.unsubscribe?.()
   },[])
 
-  // 상단 지표
+  // 메트릭
   React.useEffect(()=>{
-    ;(async()=>{
+    (async()=>{
       try{
         const { data } = await supabase.from("site_metrics")
           .select("prize_krw,cumulative_krw").eq("id",1).single()
@@ -29,37 +31,53 @@ export default function Community(){
     })()
   },[])
 
-  // 피드 로드
-  React.useEffect(()=>{ load(true) },[])
+  // 피드
+  React.useEffect(()=>{ load(true) },[sort])
+
   async function load(reset=false){
     try{
-      const { data } = await supabase
-        .from("photo") // 테이블명도 photo
-        .select("id,user_id,public_url,caption,created_at")
-        .order("created_at",{ ascending:false })
-        .limit(pageSize)
-      setPhotos(reset ? (data||[]) : [...photos, ...(data||[])])
+      if (sort === "latest"){
+        const { data } = await supabase
+          .from("photos") // ← 복수
+          .select("id,user_id,public_url,caption,created_at")
+          .order("created_at",{ ascending:false })
+          .limit(pageSize)
+        setPhotos(reset ? (data||[]) : [...photos, ...(data||[])])
+      } else {
+        const { data: base } = await supabase
+          .from("photos") // ← 복수
+          .select("id,user_id,public_url,caption,created_at")
+          .limit(pageSize * 2)
+        const ids = (base||[]).map(p=>p.id)
+        let likeMap = {}
+        if (ids.length){
+          const { data: counts } = await supabase
+            .from("photo_likes_count")
+            .select("photo_id,count")
+            .in("photo_id", ids)
+          counts?.forEach(c => { likeMap[c.photo_id] = c.count })
+        }
+        const sorted = (base||[])
+          .slice()
+          .sort((a,b)=>(likeMap[b.id]||0)-(likeMap[a.id]||0))
+          .slice(0, pageSize)
+        setPhotos(reset ? sorted : [...photos, ...sorted])
+      }
     }catch(e){ console.warn("feed load skipped:", e) }
   }
 
-  // 업로드 열기(네비 → 페이지 연결)
-  React.useEffect(()=>{
-    window.__openUploadPicker = async () => {
-      const { data:{ session } } = await supabase.auth.getSession()
-      if(!session?.user){ window.location.href = "/signup.html"; return }
-      const el = fileRef.current
-      if(!el) return
-      // iOS Safari 호환: showPicker가 되면 그걸, 안되면 click()
-      if(typeof el.showPicker === "function"){ try{ el.showPicker(); return }catch{} }
-      el.click()
+  // 업로드 버튼 → 세션 가드 후 파일 선택
+  async function onUploadClick(e){
+    e.preventDefault()
+    const { data:{ session } } = await supabase.auth.getSession()
+    if(!session?.user){
+      window.location.href = "/signup.html"
+      return
     }
-    return ()=>{ delete window.__openUploadPicker }
-  },[])
+    fileRef.current?.click()
+  }
 
-  // 섹션 내 업로드 버튼
-  function onUploadClick(e){ e.preventDefault(); window.__openUploadPicker?.() }
-
-  // 앨범에서 1장 업로드
+  // 파일 선택
   async function handlePick(e){
     const file = e.target.files?.[0]
     if(!file) return
@@ -76,23 +94,26 @@ export default function Community(){
     if(up.error){ alert("업로드 실패: " + up.error.message); e.target.value = ""; return }
 
     const { data:{ publicUrl } } = supabase.storage.from(BUCKET).getPublicUrl(key)
-    const { error: insErr } = await supabase.from("photo") // 테이블 photo
+    const { error: insErr } = await supabase
+      .from("photos") // ← 복수
       .insert({ user_id: session.user.id, public_url: publicUrl, caption: "" })
     if (insErr){ alert("DB 저장 실패: " + insErr.message); e.target.value = ""; return }
 
-    e.target.value = "" // 같은 파일 재선택 가능
+    e.target.value = ""
     setPhotos([]); load(true)
   }
 
+  function toggleSort(next){ if(next!==sort) setSort(next) }
+
   return (
     <section className="community">
-      {/* iOS: display:none 대신 1px 투명 처리 */}
+      {/* 스크린 밖 배치(모바일 브라우저에서 클릭 허용) */}
       <input
         id="community-file-input"
         ref={fileRef}
         type="file"
         accept="image/*"
-        style={{position:"absolute", top:0, left:0, width:1, height:1, opacity:0}}
+        style={{position:"fixed", left:"-10000px", top:0, width:1, height:1, opacity:0}}
         onChange={handlePick}
         aria-hidden="true"
         tabIndex={-1}
@@ -106,10 +127,17 @@ export default function Community(){
           <div className="row"><div>누적 후원 금액</div><div>{krw(metrics.cumulative_krw)}</div></div>
         </div>
 
-        {/* 제목 + 우측 업로드 (정렬 텍스트 제거) */}
+        {/* 제목 + 정렬 텍스트 + 업로드 */}
         <div className="gallery-head">
           <h2>사진 갤러리</h2>
-          <button className="upload" onClick={onUploadClick}>업로드</button>
+          <div className="right">
+            <div className="sort">
+              <span className={sort==="latest"?"on":""} onClick={()=>toggleSort("latest")}>최신순</span>
+              <span className="sep">|</span>
+              <span className={sort==="popular"?"on":""} onClick={()=>toggleSort("popular")}>인기순</span>
+            </div>
+            <button className="upload" onClick={onUploadClick}>업로드</button>
+          </div>
         </div>
 
         {/* 갤러리 */}
@@ -122,12 +150,24 @@ export default function Community(){
       <style>{`
         .community{padding:28px 16px;color:#fff}
         .kj-container{max-width:980px;margin:0 auto}
-        .metrics{background:rgba(0,0,0,.30);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:16px;display:grid;gap:12px;grid-template-rows:auto 1px auto;margin-bottom:16px}
+
+        .metrics{
+          background:rgba(0,0,0,.30);
+          border:1px solid rgba(255,255,255,.14);
+          border-radius:16px;padding:16px;
+          display:grid;gap:12px;grid-template-rows:auto 1px auto;margin-bottom:16px
+        }
         .metrics .row{display:flex;justify-content:space-between;font-weight:800}
         .div{height:1px;background:rgba(255,255,255,.18);border-radius:1px}
+
         .gallery-head{display:flex;align-items:center;justify-content:space-between;margin:10px 0 8px}
         .gallery-head h2{margin:0;font-size:20px}
+        .right{display:flex;align-items:center;gap:12px}
+        .sort span{opacity:.78;cursor:pointer}
+        .sort .on{opacity:1;font-weight:800}
+        .sort .sep{opacity:.5;margin:0 6px}
         .upload{background:#fff;color:#000;border:0;border-radius:999px;padding:8px 14px;font-weight:800;cursor:pointer}
+
         .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
         @media(max-width:640px){.grid{grid-template-columns:1fr}}
         .empty{opacity:.85;padding:24px 0}
@@ -158,9 +198,7 @@ function Card({ p, authed }){
         if(uid){
           const { data } = await supabase
             .from("photo_likes")
-            .select("photo_id")
-            .eq("photo_id",p.id)
-            .eq("user_id",uid)
+            .select("photo_id").eq("photo_id",p.id).eq("user_id",uid)
             .maybeSingle()
           setLiked(!!data)
         } else setLiked(false)
@@ -200,8 +238,7 @@ function Card({ p, authed }){
       const uid = sess?.session?.user?.id
       if(!uid || !text.trim()) return
       await supabase.from("photo_comments").insert({ photo_id:p.id, user_id:uid, content:text.trim() })
-      setText("")
-      refreshComments()
+      setText(""); refreshComments()
     }catch(e){ console.warn("cmt skipped:", e) }
   }
 
