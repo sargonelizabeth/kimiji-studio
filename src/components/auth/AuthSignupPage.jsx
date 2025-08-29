@@ -2,86 +2,93 @@
 import React from "react";
 import { supabase } from "@/lib/supabaseClient.js";
 
-export default function AuthSignupPage() {
-  const [user, setUser] = React.useState(null);
-  const [form, setForm] = React.useState({
-    nickname: "", full_name: "", email: "", phone: "", address: "", postal_code: ""
-  });
-  const [saving, setSaving] = React.useState(false);
+export default function AuthSignupPage(){
+  const [nickname,setNickname]=React.useState("");
+  const [fullName,setFullName]=React.useState("");
+  const [email,setEmail]=React.useState("");
+  const [phone,setPhone]=React.useState("");
+  const [address,setAddress]=React.useState("");
+  const [postal,setPostal]=React.useState("");
+  const [pw,setPw]=React.useState("");
+  const [pw2,setPw2]=React.useState("");
+  const [busy,setBusy]=React.useState(false);
 
-  React.useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      const u = session?.user ?? null;
-      setUser(u);
-      if (u) setForm(v => ({ ...v, email: u.email || "" }));
+  async function onGoogle(){
+    setBusy(true);
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider:"google",
+      options:{ queryParams:{ prompt:"select_account" } }
     });
-    const { data } = supabase.auth.onAuthStateChange((_e, session) => {
-      const u = session?.user ?? null;
-      setUser(u);
-      if (u) setForm(v => ({ ...v, email: u.email || "" }));
-    });
-    return () => data?.subscription?.unsubscribe?.();
-  }, []);
-
-  async function signInGoogle() {
-    const redirectTo = `${location.origin}/community.html`;
-    await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo, queryParams: { prompt: "select_account" } }
-    });
+    if(error){ alert(error.message); setBusy(false); }
   }
 
-  async function saveProfile(e) {
+  async function onSubmit(e){
     e.preventDefault();
-    if (!user) { alert("먼저 Google로 로그인 해주세요."); return; }
-    setSaving(true);
-    const payload = {
-      id: user.id,
-      nickname: form.nickname || null,
-      full_name: form.full_name || null,
-      email: form.email || user.email || null,
-      phone: form.phone || null,
-      address: form.address || null,
-      postal_code: form.postal_code || null,
-      updated_at: new Date().toISOString()
-    };
-    const { error } = await supabase.from("profiles").upsert(payload, { onConflict: "id" });
-    setSaving(false);
-    if (error) { alert("프로필 저장 실패: " + error.message); return; }
-    alert("가입 완료! 커뮤니티에서 업로드를 눌러 보세요.");
-    location.href = "/community.html";
+    if(pw!==pw2){ alert("비밀번호가 일치하지 않습니다."); return; }
+    setBusy(true);
+
+    const { data, error } = await supabase.auth.signUp({ email, password: pw });
+    if(error){ setBusy(false); return alert(error.message); }
+
+    // 프로필 저장
+    const uid = data.user?.id;
+    if(uid){
+      await supabase.from("profiles").upsert({
+        id: uid,
+        nickname, full_name: fullName, phone, address, postal_code: postal
+      });
+    }
+
+    setBusy(false);
+    window.location.href = "/community.html";
   }
 
   return (
-    <div className="page">
-      <div className="card">
-        <h1>회원가입 / 로그인</h1>
-        <button className="google" onClick={signInGoogle}>Google로 계속하기</button>
+    <main className="auth-wrap">
+      <section className="panel">
+        <h1>회원가입</h1>
+        <button className="btn google" onClick={onGoogle} disabled={busy}>Google로 계속하기</button>
+        <div className="sep">또는</div>
 
-        <div className="divider">또는</div>
-
-        <form onSubmit={saveProfile} className="form">
-          <label>닉네임<input value={form.nickname} onChange={e=>setForm({...form,nickname:e.target.value})} /></label>
-          <label>이름<input value={form.full_name} onChange={e=>setForm({...form,full_name:e.target.value})} /></label>
-          <label>이메일<input value={form.email} onChange={e=>setForm({...form,email:e.target.value})} /></label>
-          <label>전화번호<input value={form.phone} onChange={e=>setForm({...form,phone:e.target.value})} /></label>
-          <label>주소<input value={form.address} onChange={e=>setForm({...form,address:e.target.value})} /></label>
-          <label>우편번호<input value={form.postal_code} onChange={e=>setForm({...form,postal_code:e.target.value})} /></label>
-          <button className="save" disabled={saving}>{saving?"저장 중...":"가입 완료"}</button>
+        <form onSubmit={onSubmit} className="form">
+          <label>닉네임</label>
+          <input value={nickname} onChange={e=>setNickname(e.target.value)} placeholder="닉네임" required/>
+          <label>이름</label>
+          <input value={fullName} onChange={e=>setFullName(e.target.value)} placeholder="이름" required/>
+          <label>이메일</label>
+          <input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="이메일" required/>
+          <label>비밀번호</label>
+          <input type="password" value={pw} onChange={e=>setPw(e.target.value)} placeholder="비밀번호" required/>
+          <label>비밀번호 확인</label>
+          <input type="password" value={pw2} onChange={e=>setPw2(e.target.value)} placeholder="비밀번호 확인" required/>
+          <label>전화번호</label>
+          <input value={phone} onChange={e=>setPhone(e.target.value)} placeholder="010-0000-0000" />
+          <label>주소</label>
+          <input value={address} onChange={e=>setAddress(e.target.value)} placeholder="주소" />
+          <label>우편번호</label>
+          <input value={postal} onChange={e=>setPostal(e.target.value)} placeholder="우편번호" />
+          <button className="btn solid" disabled={busy}>저장하고 돌아가기</button>
         </form>
-      </div>
+
+        <div className="links-row">
+          <a href="/login.html">이미 계정이 있으신가요? 로그인</a>
+        </div>
+      </section>
 
       <style>{`
-        .page{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#000}
-        .card{width:min(520px,92%);background:#1a1a1a;color:#fff;padding:24px;border-radius:16px;box-shadow:0 8px 24px rgba(0,0,0,.4)}
-        h1{margin:0 0 12px;font-size:22px}
-        .google{width:100%;border:0;border-radius:8px;padding:12px 14px;font-weight:800;cursor:pointer;background:#fff;color:#111}
-        .divider{opacity:.7;text-align:center;margin:12px 0}
-        .form{display:grid;gap:10px}
-        label{display:grid;gap:6px;font-size:13px}
-        input{border:1px solid rgba(255,255,255,.2);background:#0f0f0f;color:#fff;border-radius:8px;padding:10px}
-        .save{margin-top:6px;background:#fff;color:#111;border:0;border-radius:10px;padding:12px 14px;font-weight:900}
+        .auth-wrap{padding:28px 16px;display:flex;justify-content:center}
+        .panel{width:100%;max-width:520px;background:#161616;border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:18px;color:#fff}
+        h1{font-size:22px;margin:6px 0 16px}
+        .btn{display:inline-flex;align-items:center;justify-content:center;border-radius:10px;padding:10px 14px;font-weight:800;border:0;cursor:pointer}
+        .btn.google{width:100%;background:#fff;color:#111}
+        .btn.solid{width:100%;background:#fff;color:#111;margin-top:8px}
+        .sep{opacity:.7;text-align:center;margin:14px 0}
+        .form{display:grid;gap:8px}
+        label{font-size:12px;opacity:.8}
+        input{background:#0d0d0d;border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:10px 12px;color:#fff}
+        .links-row{margin-top:10px;text-align:center}
+        .links-row a{color:#fff}
       `}</style>
-    </div>
+    </main>
   );
 }

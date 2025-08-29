@@ -2,105 +2,110 @@
 import React from "react";
 import { supabase } from "@/lib/supabaseClient.js";
 
-const BUCKET = "photo";   // Storage 버킷 ID
-const TABLE  = "photos";  // 사진 메타 테이블명(복수형)
-
+const BUCKET = "photo";
 const krw = n => new Intl.NumberFormat("ko-KR",{style:"currency",currency:"KRW"}).format(n||0);
 
 export default function Community(){
-  const [user, setUser] = React.useState(null);
+  const [user, setUser]   = React.useState(null);
   const [metrics, setMetrics] = React.useState({ prize_krw:0, cumulative_krw:0 });
-  const [photos, setPhotos] = React.useState([]);
+  const [photos, setPhotos]   = React.useState([]);
   const fileRef = React.useRef(null);
 
-  // 세션 추적
+  // 세션
   React.useEffect(()=>{
     supabase.auth.getSession().then(({data:{session}})=>setUser(session?.user??null));
-    const { data } = supabase.auth.onAuthStateChange((_e, session)=>setUser(session?.user??null));
-    return ()=>data?.subscription?.unsubscribe?.();
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session)=>setUser(session?.user??null));
+    return ()=>sub?.subscription?.unsubscribe?.();
   },[]);
 
-  // 메트릭(실패해도 무시)
+  // 메트릭
   React.useEffect(()=>{
     (async()=>{
       try{
-        const { data } = await supabase
-          .from("site_metrics")
-          .select("prize_krw,cumulative_krw")
-          .eq("id",1).single();
+        const { data } = await supabase.from("site_metrics")
+          .select("prize_krw,cumulative_krw").eq("id",1).single();
         if(data) setMetrics(data);
       }catch{}
     })();
   },[]);
 
   // 피드(최신순 고정)
-  React.useEffect(()=>{ load() },[]);
-  async function load(){
+  React.useEffect(()=>{ load(true); },[]);
+
+  async function load(reset=false){
     try{
       const { data } = await supabase
-        .from(TABLE)
+        .from("photo")
         .select("id,user_id,public_url,caption,created_at")
-        .order("created_at",{ascending:false})
+        .order("created_at",{ ascending:false })
         .limit(30);
-      setPhotos(data||[]);
+      setPhotos(reset ? (data||[]) : [...photos, ...(data||[])]);
     }catch(e){ console.warn("feed load skipped:", e); }
   }
 
-  // 갤러리 업로드 버튼 → 로그인 체크 → 파일 보관함 오픈
+  // 갤러리 헤더 업로드 버튼 → 로그인 가드 → 파일 선택기
   async function onUploadClick(){
     const { data:{ session } } = await supabase.auth.getSession();
-    if(!session?.user){ location.href="/signup.html"; return; }
+    if(!session?.user){
+      window.location.href = "/login.html?back=" + encodeURIComponent("/community.html");
+      return;
+    }
     fileRef.current?.click();
   }
 
-  // 파일 선택 처리
+  // 선택기(한 장)
   async function handlePick(e){
     const file = e.target.files?.[0];
     if(!file) return;
-    if(!file.type?.startsWith("image/")){
-      alert("이미지 파일만 업로드할 수 있어요."); e.target.value=""; return;
-    }
+    if(!file.type?.startsWith("image/")){ alert("이미지 파일만 선택해주세요."); e.target.value=""; return; }
 
     const { data:{ session } } = await supabase.auth.getSession();
-    if(!session?.user){ alert("로그인 후 이용해주세요."); e.target.value=""; return; }
+    if(!session?.user){ alert("로그인이 필요합니다."); e.target.value=""; return; }
 
     const ext = (file.name.split(".").pop()||"jpg").toLowerCase();
     const key = `${session.user.id}/${Date.now()}.${ext}`;
 
-    const { error: upErr } = await supabase.storage.from(BUCKET).upload(key, file, { upsert:false });
-    if(upErr){ alert("업로드 실패: "+upErr.message); e.target.value=""; return; }
+    const up = await supabase.storage.from(BUCKET).upload(key, file, { upsert:false });
+    if(up.error){ alert("업로드 실패: " + up.error.message); e.target.value=""; return; }
 
-    const { data:pub } = supabase.storage.from(BUCKET).getPublicUrl(key);
-    await supabase.from(TABLE).insert({
-      user_id: session.user.id, storage_path: key, public_url: pub.publicUrl, caption: ""
+    const { data:{ publicUrl } } = supabase.storage.from(BUCKET).getPublicUrl(key);
+    const { error:insErr } = await supabase.from("photo").insert({
+      user_id: session.user.id, public_url: publicUrl, caption: ""
     });
+    if(insErr){ alert("DB 저장 실패: " + insErr.message); e.target.value=""; return; }
 
-    e.target.value = "";
-    load();
+    e.target.value="";
+    setPhotos([]); load(true);
   }
 
   return (
     <section className="community">
-      {/* iOS에서 capture 제거 → 사진 보관함 팝업 */}
-      <input ref={fileRef} type="file" accept="image/*"
-             style={{position:"absolute",width:1,height:1,opacity:0,pointerEvents:"none"}}
-             onChange={handlePick} aria-hidden="true" tabIndex={-1} />
+      {/* 시각적으로만 숨김: iOS 사파리에서 새 페이지로 열리는 문제 방지 */}
+      <input
+        ref={fileRef}
+        type="file"
+        accept="image/*"
+        style={{position:"absolute",width:1,height:1,opacity:0,pointerEvents:"none"}}
+        onChange={handlePick}
+        tabIndex={-1}
+        aria-hidden="true"
+      />
 
       <div className="kj-container">
-        {/* 상단 지표 */}
+        {/* 지표 */}
         <div className="metrics">
           <div className="row"><div>상금</div><div>{krw(metrics.prize_krw)}</div></div>
           <div className="div" />
           <div className="row"><div>누적 후원 금액</div><div>{krw(metrics.cumulative_krw)}</div></div>
         </div>
 
-        {/* 제목 + 업로드 */}
+        {/* 갤러리 헤더(우측은 업로드만) */}
         <div className="gallery-head">
           <h2>사진 갤러리</h2>
           <button className="upload" onClick={onUploadClick}>업로드</button>
         </div>
 
-        {/* 갤러리 */}
+        {/* 그리드 */}
         <div className="grid">
           {photos.map(p => <Card key={p.id} p={p} authed={!!user} />)}
           {photos.length===0 && <div className="empty">아직 업로드가 없어요. 로그인 후 첫 사진을 올려보세요.</div>}
@@ -113,11 +118,9 @@ export default function Community(){
         .metrics{background:rgba(0,0,0,.30);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:16px;display:grid;gap:12px;grid-template-rows:auto 1px auto;margin-bottom:16px}
         .metrics .row{display:flex;justify-content:space-between;font-weight:800}
         .div{height:1px;background:rgba(255,255,255,.18);border-radius:1px}
-
         .gallery-head{display:flex;align-items:center;justify-content:space-between;margin:10px 0 8px}
         .gallery-head h2{margin:0;font-size:20px}
         .upload{background:#fff;color:#000;border:0;border-radius:999px;padding:8px 14px;font-weight:800;cursor:pointer}
-
         .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
         @media(max-width:640px){.grid{grid-template-columns:1fr}}
         .empty{opacity:.85;padding:24px 0}
@@ -136,16 +139,20 @@ function Card({ p, authed }){
 
   async function refreshLikes(){
     try{
-      const { count } = await supabase.from("photo_likes")
-        .select("*",{count:"exact",head:true}).eq("photo_id",p.id);
+      const { count } = await supabase
+        .from("photo_likes")
+        .select("*",{count:"exact",head:true})
+        .eq("photo_id",p.id);
       setCount(count||0);
 
       if(authed){
-        const { data:sess } = await supabase.auth.getSession();
-        const uid = sess?.session?.user?.id;
+        const { data:s } = await supabase.auth.getSession();
+        const uid = s?.session?.user?.id;
         if(uid){
-          const { data } = await supabase.from("photo_likes")
-            .select("photo_id").eq("photo_id",p.id).eq("user_id",uid).maybeSingle();
+          const { data } = await supabase
+            .from("photo_likes")
+            .select("photo_id")
+            .eq("photo_id",p.id).eq("user_id",uid).maybeSingle();
           setLiked(!!data);
         } else setLiked(false);
       } else setLiked(false);
@@ -154,8 +161,10 @@ function Card({ p, authed }){
 
   async function refreshComments(){
     try{
-      const { data } = await supabase.from("photo_comments")
-        .select("id,content,created_at").eq("photo_id",p.id)
+      const { data } = await supabase
+        .from("photo_comments")
+        .select("id,content,created_at")
+        .eq("photo_id",p.id)
         .order("created_at",{ascending:true});
       setComments(data||[]);
     }catch(e){ console.warn("comments skipped:", e); }
@@ -163,8 +172,7 @@ function Card({ p, authed }){
 
   async function toggleLike(){
     try{
-      const { data:sess } = await supabase.auth.getSession();
-      const uid = sess?.session?.user?.id; if(!uid) return;
+      const { data:s } = await supabase.auth.getSession(); const uid=s?.session?.user?.id; if(!uid) return;
       if(liked){
         await supabase.from("photo_likes").delete().eq("photo_id",p.id).eq("user_id",uid);
       }else{
@@ -177,12 +185,9 @@ function Card({ p, authed }){
   async function postComment(e){
     e.preventDefault();
     try{
-      const { data:sess } = await supabase.auth.getSession();
-      const uid = sess?.session?.user?.id;
-      if(!uid || !text.trim()) return;
+      const { data:s } = await supabase.auth.getSession(); const uid=s?.session?.user?.id; if(!uid || !text.trim()) return;
       await supabase.from("photo_comments").insert({ photo_id:p.id, user_id:uid, content:text.trim() });
-      setText("");
-      refreshComments();
+      setText(""); refreshComments();
     }catch(e){ console.warn("cmt skipped:", e); }
   }
 
