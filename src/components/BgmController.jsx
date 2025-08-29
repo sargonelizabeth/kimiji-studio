@@ -1,37 +1,18 @@
-// src/components/BgmController.jsx
+// 예: src/components/BgmController.jsx
 import React from "react";
-
 export default function BgmController(){
-  const audioRef = React.useRef(null);
-  const [playing,setPlaying] = React.useState(false);
-
+  const ref = React.useRef(null);
   React.useEffect(()=>{
-    const a = audioRef.current;
-    const kick = () => a?.play?.().then(()=>setPlaying(true)).catch(()=>{});
-    document.addEventListener("touchstart", kick, { once:true });
-    document.addEventListener("click",      kick, { once:true });
+    function arm(){
+      const a = ref.current;
+      if (!a) return;
+      a.muted = false;
+      a.play().catch(()=>{ /* 사용자가 거부하면 버튼으로만 */ });
+      window.removeEventListener("pointerdown", arm);
+      window.removeEventListener("touchstart", arm);
+    }
+    window.addEventListener("pointerdown", arm, { once:true });
+    window.addEventListener("touchstart", arm, { once:true });
   },[]);
-
-  const toggle = ()=>{
-    const a = audioRef.current;
-    if(!a) return;
-    if(playing){ a.pause(); setPlaying(false); }
-    else { a.play().then(()=>setPlaying(true)).catch(()=>{}); }
-  };
-
-  return (
-    <>
-      <audio ref={audioRef} src="/bgm.mp3" loop preload="auto" playsInline />
-      <button className="bgm-toggle" onClick={toggle} aria-pressed={playing}>
-        {playing ? "🔊" : "🔈"}
-      </button>
-      <style>{`
-        .bgm-toggle{
-          position:fixed; right:12px; bottom:12px; z-index:60;
-          background:rgba(0,0,0,.7); color:#fff; border:0; border-radius:999px;
-          padding:10px 12px; font-size:14px; font-weight:800; cursor:pointer;
-        }
-      `}</style>
-    </>
-  );
+  return <audio ref={ref} src="/bgm.mp3" preload="auto" loop muted playsInline/>;
 }
