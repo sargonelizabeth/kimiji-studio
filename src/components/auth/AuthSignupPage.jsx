@@ -1,43 +1,78 @@
-import React from "react"
-import { supabase } from "@/lib/supabaseClient.js"
-import "@/styles/auth.css"
+// src/components/auth/AuthSignupPage.jsx
+import React from "react";
+import { supabase } from "@/lib/supabaseClient.js";
 
-export default function AuthSignupPage(){
-  const google = async () => {
-    await supabase.auth.signInWithOAuth({
+// 구글 로그인 버튼 + 리디렉트 복귀시 code 교환 처리
+export default function AuthSignupPage() {
+  const [busy, setBusy] = React.useState(false);
+  const [msg, setMsg]   = React.useState("");
+
+  // ① 리디렉트 복귀: URL의 ?code=... 있으면 세션으로 교환
+  React.useEffect(() => {
+    (async () => {
+      const params = new URLSearchParams(location.search);
+      const code   = params.get("code");
+      const errd   = params.get("error_description");
+      if (errd) setMsg(decodeURIComponent(errd));
+
+      if (code) {
+        setBusy(true);
+        const { data, error } = await supabase.auth.exchangeCodeForSession({ code });
+        setBusy(false);
+        if (error) {
+          setMsg(error.message || "로그인 처리 중 오류가 발생했습니다.");
+          return;
+        }
+        // 세션이 생겼으니 커뮤니티로 이동
+        location.replace("/community.html");
+      }
+    })();
+  }, []);
+
+  // ② “Google로 계속하기” 클릭 → 계정 선택 강제 + signup.html로 복귀
+  async function signInGoogle(e) {
+    e.preventDefault();
+    setBusy(true);
+    const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/community.html`,
-        queryParams: { prompt: "select_account" }
-      }
-    })
+        redirectTo: `${location.origin}/signup.html`,
+        // 계정 선택 강제
+        queryParams: { prompt: "select_account", access_type: "offline" },
+      },
+    });
+    setBusy(false);
+    if (error) setMsg(error.message || "Google 로그인 시작에 실패했습니다.");
   }
 
   return (
-    <div className="ig-wrap">
-      <div className="ig-card">
-        <div className="ig-brand">KIMIJI STUDIO</div>
-        <div className="ig-sub">계정을 만들어 커뮤니티에 사진을 올려보세요</div>
+    <main className="signup-screen">
+      <div className="card">
+        <h1>회원가입 / 로그인</h1>
+        <p className="hint">아래 버튼으로 간편하게 시작하세요.</p>
 
-        <button className="ig-google" onClick={google}>
-          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.35 11.1H12v2.9h5.3c-.23 1.5-1.78 4.4-5.3 4.4a5.8 5.8 0 1 1 0-11.6c1.32 0 2.52.47 3.46 1.25l2.36-2.36A9.61 9.61 0 0 0 12 3.5C6.98 3.5 2.9 7.58 2.9 12.6S6.98 21.7 12 21.7c5.04 0 8.36-3.54 8.36-8.52 0-.57-.07-1.02-.16-1.48Z"/></svg>
-          Google로 계속하기
+        <button
+          className="btn btn-google"
+          onClick={signInGoogle}
+          disabled={busy}
+          aria-busy={busy}
+        >
+          {busy ? "처리 중..." : "Google로 계속하기"}
         </button>
 
-        <div className="ig-divider"><span>또는</span></div>
-
-        <form className="ig-form" onSubmit={(e)=>e.preventDefault()}>
-          <input className="ig-input" placeholder="이름" />
-          <input className="ig-input" placeholder="이메일" />
-          <input className="ig-input" placeholder="전화번호" />
-          <input className="ig-input" placeholder="집 주소" />
-          <button className="ig-primary" disabled>회원가입 (이메일 방식 준비중)</button>
-        </form>
-
-        <div className="ig-footer">
-          계정이 있으신가요? <a href="/signup.html">로그인</a>
-        </div>
+        {msg && <p className="err">{msg}</p>}
       </div>
-    </div>
-  )
+
+      <style>{`
+        .signup-screen{min-height:calc(100vh - 100px);display:flex;align-items:center;justify-content:center;padding:24px;color:#fff}
+        .card{width:100%;max-width:420px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.15);border-radius:16px;padding:20px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+        h1{margin:0 0 10px;font-size:20px;font-weight:900}
+        .hint{opacity:.9;margin:0 0 16px}
+        .btn{width:100%;display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:10px;min-height:44px;cursor:pointer;font-weight:800}
+        .btn-google{background:#fff;color:#111}
+        .btn[aria-busy="true"]{opacity:.7;cursor:wait}
+        .err{margin-top:12px;color:#ffd5d5}
+      `}</style>
+    </main>
+  );
 }
