@@ -1,79 +1,72 @@
 // src/components/NavPure.jsx
-import React from 'react'
-import { supabase } from '@/lib/supabaseClient.js'
+import React from "react";
 
-export default function NavPure() {
-  const [user, setUser] = React.useState(null)
-
-  React.useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => setUser(session?.user ?? null))
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => setUser(session?.user ?? null))
-    return () => sub?.subscription?.unsubscribe?.()
-  }, [])
-
-  const onLoginClick = (e) => {
-    e.preventDefault()
-    window.location.href = '/signup.html'
-  }
-
-  const onLogoutClick = async (e) => {
-    e.preventDefault()
-    await supabase.auth.signOut()
-    window.location.reload()
-  }
-
-  const isCommunity = typeof window !== 'undefined' && window.location.pathname.endsWith('/community.html')
-  const ctaLabel = isCommunity ? '업로드' : '제작하기'
-
-  const onCtaClick = (e) => {
-    if (isCommunity) {
-      // 같은 페이지에 있는 숨김 파일 입력 그대로 클릭(모바일 대응)
-      const input = document.getElementById('community-file-input')
-      if (input) {
-        e.preventDefault()
-        input.click()
-        return
-      }
+/**
+ * 공통 네비게이션
+ * - 상단: 좌측 브랜드 / 우측 로그인
+ * - 하단: 좌측 메뉴(포트폴리오·커뮤니티·About) / 우측 CTA(제작하기|업로드)
+ * - onCtaClick 이 있으면 <button>으로 렌더링하고 페이지 이동 없이 콜백 실행
+ * - onCtaClick 이 없으면 href 로 이동
+ */
+export default function NavPure({
+  ctaLabel = "제작하기",
+  ctaHref = "/upload.html",
+  onCtaClick, // 커뮤니티 페이지에서 업로드 피커 열 때 전달
+}) {
+  const handleCta = (e) => {
+    if (onCtaClick) {
+      e.preventDefault(); // iOS에서 사용자 제스처 체인 유지
+      onCtaClick();
     }
-    // 그 외엔 업로드 페이지로 이동
-    // (회원가드 없이 진입, 페이지 안에서 다시 가드)
-    window.location.href = '/upload.html'
-  }
+  };
 
   return (
-    <header className="kj-nav">
-      <div className="kj-nav-top">
-        <a className="brand" href="/" aria-label="KIMIJI STUDIO 홈">KIMIJI STUDIO</a>
-        {user ? (
-          <a href="#" className="login" onClick={onLogoutClick}>로그아웃</a>
-        ) : (
-          <a href="/signup.html" className="login" onClick={onLoginClick}>로그인</a>
-        )}
+    <header className="site-nav" role="banner">
+      <div className="nav-top kj-container">
+        <a href="/" className="brand" aria-label="KIMIJI STUDIO 홈">KIMIJI STUDIO</a>
+        <a href="/signup.html" className="login-link">로그인</a>
       </div>
 
-      <nav className="kj-nav-bottom" aria-label="주요 메뉴">
-        <ul className="links">
-          <li><a className="link" href="/#portfolio">포트폴리오</a></li>
-          <li><a className="link" href="/community.html">커뮤니티</a></li>
-          <li><a className="link" href="/#about">About</a></li>
-          <li><a className="btn-cta" href="/upload.html" onClick={onCtaClick}>{ctaLabel}</a></li>
+      <nav className="nav-bottom kj-container" aria-label="주요 메뉴">
+        <ul className="nav-links" role="list">
+          <li><a href="/#portfolio" className="nav-link">포트폴리오</a></li>
+          <li><a href="/community.html" className="nav-link">커뮤니티</a></li>
+          <li><a href="/#about" className="nav-link">About</a></li>
         </ul>
+
+        <div className="cta-wrap">
+          {onCtaClick ? (
+            <button type="button" className="btn btn-cta" onClick={handleCta}>
+              {ctaLabel}
+            </button>
+          ) : (
+            <a href={ctaHref} className="btn btn-cta">{ctaLabel}</a>
+          )}
+        </div>
       </nav>
 
       <style>{`
-        .kj-nav{position:sticky;top:0;z-index:1000;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.08)}
-        .kj-nav-top{max-width:1200px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;justify-content:space-between}
-        .brand{color:#fff;text-decoration:none;font-weight:800;letter-spacing:.08em}
-        .login{color:#fff;text-decoration:none;font-weight:700;padding:8px 10px;border-radius:10px}
-        .login:hover{background:rgba(255,255,255,.1)}
-        .kj-nav-bottom{max-width:1200px;margin:0 auto;padding:0 20px 12px}
-        .links{list-style:none;display:flex;gap:10px;margin:0;padding:0;flex-wrap:wrap}
-        .link{color:#fff;text-decoration:none;padding:10px 12px;border-radius:10px;font-weight:700}
-        .link:hover{background:rgba(255,255,255,.10)}
-        .btn-cta{margin-left:auto;background:#fff;color:#000;border:0;border-radius:12px;padding:10px 14px;font-weight:800;text-decoration:none}
-        .btn-cta:hover{filter:brightness(.96)}
-        @media(max-width:720px){.links{row-gap:8px}}
+        .kj-container{max-width:1100px;margin:0 auto;padding:0 16px}
+        .site-nav{position:sticky;top:0;z-index:40;background:#3b2c16;color:#fff}
+        .nav-top,.nav-bottom{display:flex;align-items:center;justify-content:space-between}
+        .nav-top{height:48px}
+        .brand{font-weight:900;letter-spacing:1px;text-decoration:none;color:#fff;font-size:18px;line-height:1}
+        .login-link{font-weight:700;text-decoration:none;color:#fff;opacity:.95}
+        .nav-bottom{height:52px;border-top:1px solid rgba(255,255,255,.12)}
+        .nav-links{display:flex;gap:18px;margin:0;padding:0;list-style:none}
+        .nav-link{display:inline-block;padding:10px 8px;text-decoration:none;color:#fff;font-weight:700;opacity:.95}
+        .cta-wrap{display:flex;align-items:center}
+        .btn{display:inline-flex;align-items:center;justify-content:center;border:0;cursor:pointer}
+        .btn-cta{min-height:36px;padding:8px 16px;border-radius:999px;background:#fff;color:#1b1b1b;font-weight:800;font-size:14px;line-height:1}
+        @media (max-width:640px){
+          .brand{font-size:16px}
+          .nav-links{gap:10px}
+          .nav-link{padding:8px 6px;font-size:14px}
+          .btn-cta{padding:8px 14px;font-size:14px}
+          .nav-top{height:44px}
+          .nav-bottom{height:48px}
+        }
       `}</style>
     </header>
-  )
+  );
 }
