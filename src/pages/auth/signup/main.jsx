@@ -1,15 +1,6 @@
-// (확인용) src/pages/auth/signup/main.jsx
-import React from "react";
-import { createRoot } from "react-dom/client";
-import Nav from "@/components/Nav.jsx";
-import AuthSignupPage from "@/components/auth/AuthSignupPage.jsx";
-import "@/index.css";
-import "@/styles/brand.css";
+import React from 'react'
+import { createRoot } from 'react-dom/client'
+import '@/index.css'
+import AuthSignupPage from '@/components/auth/AuthSignupPage.jsx'
 
-function App(){
-  return (<>
-    <Nav />
-    <AuthSignupPage />
-  </>);
-}
-createRoot(document.getElementById("root")).render(<App />);
+createRoot(document.getElementById('root')).render(<AuthSignupPage/>)
