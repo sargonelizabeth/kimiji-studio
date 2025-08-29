@@ -2,6 +2,29 @@ import React from "react"
 import Nav from "@/components/Nav.jsx"
 import { supabase } from "@/lib/supabaseClient.js"
 
+// 업로드 버튼 (갤러리 헤더의 업로드)
+async function onUploadClick(e){
+  e.preventDefault()
+  const { data:{ session } } = await supabase.auth.getSession()
+  if(!session?.user){
+    const ret = encodeURIComponent('/community.html')
+    location.href = `/login.html?returnTo=${ret}`
+    return
+  }
+  // iOS Safari 제약 때문에 input은 display:none 쓰지 않음
+  fileRef.current?.click()
+}
+
+// 파일 input
+<input
+  ref={fileRef}
+  type="file"
+  accept="image/*"
+  style={{ position:'absolute', width:1, height:1, opacity:0, pointerEvents:'none' }}
+  onChange={handlePick}
+/>
+
+
 const BUCKET = 'photo'
 const krw = n => new Intl.NumberFormat("ko-KR",{style:"currency",currency:"KRW"}).format(n||0)
 
