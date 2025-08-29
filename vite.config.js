@@ -1,21 +1,20 @@
-// vite.config.js
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import { resolve } from 'path'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import { resolve } from "node:path";
 
 export default defineConfig({
   plugins: [react()],
-  resolve:{ alias:{ '@': resolve(__dirname, 'src') } },
-  build:{
-    rollupOptions:{
-      input:{
-        index:     resolve(__dirname, 'index.html'),
-        community: resolve(__dirname, 'community.html'),
-        upload:    resolve(__dirname, 'upload.html'),
-        signup:    resolve(__dirname, 'signup.html'),
-        login:     resolve(__dirname, 'login.html'),
-        reset:     resolve(__dirname, 'reset.html'),
+  build: {
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, "index.html"),
+        community: resolve(__dirname, "community.html"),
+        signup: resolve(__dirname, "signup.html"),
+        login: resolve(__dirname, "login.html"),
+        find: resolve(__dirname, "find.html"),
+        upload: resolve(__dirname, "upload.html"),
+        authCallback: resolve(__dirname, "auth/callback.html"),
       }
     }
   }
-})
+});

@@ -1,15 +1,16 @@
-// src/pages/auth/callback/main.jsx
 import { supabase } from "@/lib/supabaseClient.js";
 
+// Supabase OAuth code → 세션으로 교환
 (async () => {
   try {
-    // PKCE 코드 교환
-    await supabase.auth.exchangeCodeForSession({ currentURL: location.href });
-  } catch (e) {
-    console.error("exchangeCodeForSession failed:", e);
-  } finally {
-    const url = new URL(location.href);
-    const next = url.searchParams.get("next") || "/community.html";
-    location.replace(next);
+    await supabase.auth.exchangeCodeForSession(window.location.href);
+  } catch(e) {
+    // ignore – 이미 세션이 있거나 한번 처리됨
   }
+  const url = new URL(window.location.href);
+  const next = localStorage.getItem("postAuthRedirect")
+            || url.searchParams.get("next")
+            || "/community.html";
+  localStorage.removeItem("postAuthRedirect");
+  window.location.replace(next);
 })();

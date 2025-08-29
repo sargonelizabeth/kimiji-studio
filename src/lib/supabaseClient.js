@@ -11,4 +11,15 @@ export const supabase = createClient(url, key, {
     detectSessionInUrl: true,
     flowType: 'pkce'
   }
+
+
 })
+
+// OAuth 콜백 파라미터가 보이면 세션 교환 시도
+if (typeof window !== "undefined") {
+  const hasCode = window.location.search.includes("code=");
+  if (hasCode) {
+    supabase.auth.exchangeCodeForSession(window.location.href).catch(()=>{});
+  }
+}
+

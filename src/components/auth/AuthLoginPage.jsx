@@ -1,67 +1,76 @@
-// src/components/auth/AuthLoginPage.jsx
 import React from "react";
 import { supabase } from "@/lib/supabaseClient.js";
 import Nav from "@/components/Nav.jsx";
 
-export default function AuthLoginPage() {
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const next = new URLSearchParams(location.search).get("next") || "/";
+export default function AuthLoginPage(){
+  const [email,setEmail]=React.useState("");
+  const [pw,setPw]=React.useState("");
+  const [err,setErr]=React.useState("");
 
-  async function handleGoogle() {
-    await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: `${location.origin}/auth/callback.html?next=${encodeURIComponent(next)}`,
-        queryParams: { prompt: "select_account" },
-      },
-    });
-  }
-
-  async function handleLogin(e) {
+  async function onEmailLogin(e){
     e.preventDefault();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) { alert(error.message); return; }
-    location.href = next;
+    setErr("");
+    const { error } = await supabase.auth.signInWithPassword({ email, password: pw });
+    if(error){ setErr(error.message); return; }
+    const next = new URLSearchParams(window.location.search).get("next") || "/community.html";
+    window.location.replace(next);
   }
 
   return (
     <>
-      <Nav />
-      <main className="auth-wrap">
-        <section className="card">
+      <Nav page="auth" />
+      <section className="auth-wrap">
+        <div className="card">
           <h1>로그인</h1>
-          <button className="btn-google" onClick={handleGoogle}>Google로 계속하기</button>
-          <div className="sep">또는</div>
-          <form onSubmit={handleLogin} className="form">
-            <label>이메일</label>
-            <input type="email" value={email} onChange={e=>setEmail(e.target.value)} required placeholder="you@example.com" />
-            <label>비밀번호</label>
-            <input type="password" value={password} onChange={e=>setPassword(e.target.value)} required />
-            <button className="btn-submit">로그인</button>
+          <button className="gbtn" onClick={()=>signInWithGoogle()}>
+            Google로 계속하기
+          </button>
+          <div className="or">또는</div>
+          <form onSubmit={onEmailLogin}>
+            <label>이메일<input type="email" value={email} onChange={e=>setEmail(e.target.value)} required/></label>
+            <label>비밀번호<input type="password" value={pw} onChange={e=>setPw(e.target.value)} required/></label>
+            <button className="primary" type="submit">로그인</button>
+            {err && <p className="err">{err}</p>}
           </form>
           <div className="links">
-            <a href="/auth/signup.html">회원가입</a>
-            <span>·</span>
-            <a href="/auth/recover.html">아이디/비밀번호 찾기</a>
+            <a href="/signup.html">회원가입</a>
+            <span className="dot">·</span>
+            <a href="/find.html">아이디/비밀번호 찾기</a>
           </div>
-        </section>
-      </main>
-
-      <style>{commonAuthCss}</style>
+        </div>
+      </section>
+      <Style />
     </>
   );
 }
 
-const commonAuthCss = `
-.auth-wrap{max-width:680px;margin:24px auto;padding:0 16px}
-.card{background:#111;border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:22px;color:#fff}
-h1{margin:0 0 14px}
-.btn-google{width:100%;border-radius:999px;border:0;background:#fff;color:#000;padding:12px 16px;font-weight:900}
-.sep{opacity:.7;text-align:center;margin:14px 0}
-.form{display:grid;gap:10px}
-.form input{border:1px solid rgba(255,255,255,.28);background:transparent;color:#fff;border-radius:10px;padding:10px}
-.btn-submit{margin-top:6px;width:100%;border-radius:999px;border:0;background:#fff;color:#000;padding:12px 16px;font-weight:900}
-.links{margin-top:12px;display:flex;gap:10px;justify-content:center}
-.links a{white-space:nowrap}
-`;
+async function signInWithGoogle(){
+  localStorage.setItem("postAuthRedirect", new URLSearchParams(location.search).get("next") || "/community.html");
+  await supabase.auth.signInWithOAuth({
+    provider:"google",
+    options:{
+      redirectTo: `${location.origin}/auth/callback.html`,
+      queryParams:{ prompt:"select_account" }
+    }
+  });
+}
+
+function Style(){
+  return (
+    <style>{`
+      .auth-wrap{min-height:calc(100vh - 60px);background:#000;color:#fff;padding:24px 16px}
+      .card{max-width:560px;margin:0 auto;background:#0f0f0f;border:1px solid #222;border-radius:18px;padding:18px}
+      h1{margin:2px 2px 12px}
+      .gbtn{width:100%;border-radius:999px;padding:12px 14px;border:1px solid #444;background:#fff;color:#000;font-weight:800}
+      .or{opacity:.7;text-align:center;margin:12px 0}
+      form{display:flex;flex-direction:column;gap:10px}
+      label{display:flex;flex-direction:column;gap:6px}
+      input{border-radius:12px;border:1px solid #333;background:#111;color:#fff;padding:12px}
+      .primary{margin-top:6px;border:0;border-radius:999px;background:#fff;color:#000;padding:12px 16px;font-weight:900}
+      .err{color:#ff6b6b;margin:8px 0 0}
+      .links{margin-top:10px;text-align:center;white-space:nowrap}
+      .links a{color:#fff}
+      .dot{opacity:.6;margin:0 6px}
+    `}</style>
+  )
+}
