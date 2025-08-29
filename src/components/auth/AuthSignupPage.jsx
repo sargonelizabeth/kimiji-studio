@@ -1,98 +1,76 @@
+// src/components/auth/AuthSignupPage.jsx
 import React from 'react'
 import { supabase } from '@/lib/supabaseClient.js'
-import Nav from '@/components/Nav.jsx'
 
 export default function AuthSignupPage(){
-  const [form,setForm]=React.useState({ nickname:'', full_name:'', email:'', password:'', password2:'', phone:'', address:'', zip:'' })
-  const [busy,setBusy]=React.useState(false)
-  const [msg,setMsg]=React.useState('')
+  const [form,setForm] = React.useState({
+    nickname:'', name:'', email:'', password:'', confirm:'', phone:'', address:'', postal:''
+  })
+  const [busy,setBusy] = React.useState(false)
 
-  function upd(k,v){ setForm(p=>({...p,[k]:v})) }
+  const set = (k)=>(e)=>setForm({...form,[k]:e.target.value})
 
-  async function onGoogle(){
-    try{
-      setBusy(true); setMsg('')
-      await supabase.auth.signInWithOAuth({
-        provider:'google',
-        options:{
-          redirectTo: window.location.origin + '/',       // 완료 후 홈
-          queryParams: { prompt: 'select_account' }
-        }
-      })
-    }catch(e){ setMsg('Google 로그인 중 오류: '+(e?.message||e)); setBusy(false) }
+  async function handleGoogle(){
+    const redirectTo = `${window.location.origin}/community.html`
+    const { error } = await supabase.auth.signInWithOAuth({ provider:'google', options:{ redirectTo }})
+    if(error) alert(error.message)
   }
 
-  async function onSubmit(e){
+  async function handleSubmit(e){
     e.preventDefault()
-    setMsg('')
-    if(form.password !== form.password2){ setMsg('비밀번호 확인이 일치하지 않습니다.'); return }
-    try{
-      setBusy(true)
-      const { data, error } = await supabase.auth.signUp({
-        email: form.email,
-        password: form.password,
-        options: { data: { nickname: form.nickname, full_name: form.full_name, phone: form.phone, address: form.address, zip: form.zip } }
+    if(form.password !== form.confirm){ alert('비밀번호가 일치하지 않습니다.'); return }
+    setBusy(true)
+    const { data, error } = await supabase.auth.signUp({
+      email: form.email, password: form.password,
+      options: { data: { nickname:form.nickname, name:form.name, phone:form.phone, address:form.address, postal:form.postal } }
+    })
+    setBusy(false)
+    if(error){ alert(error.message); return }
+
+    // 이메일 확인이 꺼져있다면 바로 세션이 생김 → profiles 저장
+    const uid = data.user?.id
+    if(uid){
+      await supabase.from('profiles').upsert({
+        id: uid, nickname:form.nickname, name:form.name, phone:form.phone, address:form.address, postal:form.postal
       })
-      if(error){ setMsg(error.message); setBusy(false); return }
-
-      // 프로필 테이블에 기본행(없으면 무시)
-      await supabase.from('profiles').insert({
-        user_id: data.user?.id, nickname: form.nickname, full_name: form.full_name,
-        phone: form.phone, address: form.address, zip: form.zip
-      }).catch(()=>{})
-
-      alert('가입 완료! 이메일 인증을 요구하는 설정이면 메일함을 확인해 주세요.')
-      location.replace('/')
-    }catch(e){
-      setMsg('가입 실패: '+(e?.message||e)); setBusy(false)
+      window.location.href='/community.html'
+    }else{
+      alert('가입 메일을 확인한 뒤 로그인해주세요.')
+      window.location.href='/login.html'
     }
   }
 
   return (
-    <>
-      <Nav/>
-      <section className="auth-shell">
-        <div className="card">
-          <h1>회원가입</h1>
-
-          <button className="google" disabled={busy} onClick={onGoogle}>Google로 계속하기</button>
-          <div className="or">또는</div>
-
-          <form onSubmit={onSubmit}>
-            <label>닉네임<input value={form.nickname} onChange={e=>upd('nickname',e.target.value)} required/></label>
-            <label>이름<input value={form.full_name} onChange={e=>upd('full_name',e.target.value)} required/></label>
-            <label>이메일<input type="email" value={form.email} onChange={e=>upd('email',e.target.value)} required/></label>
-            <label>비밀번호<input type="password" value={form.password} onChange={e=>upd('password',e.target.value)} required/></label>
-            <label>비밀번호 확인<input type="password" value={form.password2} onChange={e=>upd('password2',e.target.value)} required/></label>
-            <label>전화번호<input value={form.phone} onChange={e=>upd('phone',e.target.value)} placeholder="010-0000-0000"/></label>
-            <label>주소<input value={form.address} onChange={e=>upd('address',e.target.value)} /></label>
-            <label>우편번호<input value={form.zip} onChange={e=>upd('zip',e.target.value)} /></label>
-            <button className="primary" disabled={busy}>저장하고 돌아가기</button>
-          </form>
-
-          <div className="links">
-            <a href="/login.html">이미 계정이 있으신가요? 로그인</a>
-          </div>
-
-          {msg && <p className="msg">{msg}</p>}
-        </div>
-      </section>
-
-      <style>{authCss}</style>
-    </>
+    <section className="auth">
+      <div className="panel">
+        <h1>회원가입</h1>
+        <button className="google" onClick={handleGoogle}>Google로 계속하기</button>
+        <div className="or">또는</div>
+        <form onSubmit={handleSubmit}>
+          <label>닉네임<input value={form.nickname} onChange={set('nickname')} /></label>
+          <label>이름<input value={form.name} onChange={set('name')} /></label>
+          <label>이메일<input type="email" value={form.email} onChange={set('email')} required/></label>
+          <label>비밀번호<input type="password" value={form.password} onChange={set('password')} required/></label>
+          <label>비밀번호 확인<input type="password" value={form.confirm} onChange={set('confirm')} required/></label>
+          <label>전화번호<input value={form.phone} onChange={set('phone')} placeholder="010-0000-0000"/></label>
+          <label>주소<input value={form.address} onChange={set('address')} /></label>
+          <label>우편번호<input value={form.postal} onChange={set('postal')} /></label>
+          <button className="primary" disabled={busy}>{busy?'저장 중...':'저장하고 돌아가기'}</button>
+        </form>
+      </div>
+      <style>{panelCss}</style>
+    </section>
   )
 }
 
-const authCss = `
-.auth-shell{display:flex;justify-content:center;padding:24px 16px}
-.card{width:100%;max-width:560px;background:#121212;border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:16px;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.3)}
-.card h1{margin:0 0 12px 0}
-.google{width:100%;border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:12px;background:#1a1a1a;color:#fff}
-.or{opacity:.7;text-align:center;margin:14px 0}
-form{display:flex;flex-direction:column;gap:10px}
-label{display:flex;flex-direction:column;gap:6px}
-input{border:1px solid rgba(255,255,255,.2);background:#0c0c0c;color:#fff;border-radius:10px;padding:12px}
-.primary{background:#fff;color:#111;border:0;border-radius:12px;padding:12px;font-weight:800;margin-top:8px}
-.links{margin-top:12px;display:flex;gap:10px;justify-content:center}
-.msg{margin-top:10px;color:#ff8}
+const panelCss = `
+  .auth{min-height:calc(100vh - 64px);display:flex;align-items:flex-start;justify-content:center;padding:24px}
+  .panel{width:100%;max-width:640px;background:#111;border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:20px;color:#fff}
+  h1{margin:0 0 12px}
+  .google{width:100%;padding:12px;border-radius:999px;border:0;background:#fff;color:#111;font-weight:800}
+  .or{opacity:.7;text-align:center;margin:14px 0}
+  form{display:grid;gap:10px}
+  label{display:grid;gap:6px;font-weight:600}
+  input{width:100%;border:1px solid rgba(255,255,255,.25);background:#000;color:#fff;border-radius:10px;padding:12px}
+  .primary{margin-top:6px;width:100%;padding:12px;border-radius:999px;border:0;background:#fff;color:#111;font-weight:800}
 `

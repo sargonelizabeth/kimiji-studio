@@ -1,48 +1,43 @@
+// src/components/auth/AuthResetPage.jsx
 import React from 'react'
 import { supabase } from '@/lib/supabaseClient.js'
-import Nav from '@/components/Nav.jsx'
 
 export default function AuthResetPage(){
-  const [email,setEmail]=React.useState('')
-  const [msg,setMsg]=React.useState('')
-  const [busy,setBusy]=React.useState(false)
+  const [email,setEmail] = React.useState('')
+  const [sent,setSent]   = React.useState(false)
 
-  async function onSend(e){
+  async function sendReset(e){
     e.preventDefault()
-    try{
-      setBusy(true); setMsg('')
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin + '/login.html'   // 메일의 링크 클릭 후 돌아올 위치
-      })
-      if(error){ setMsg(error.message); setBusy(false); return }
-      setMsg('재설정 메일을 보냈습니다. 메일함을 확인해 주세요.')
-      setBusy(false)
-    }catch(e){ setMsg('전송 실패: '+(e?.message||e)); setBusy(false) }
+    const redirectTo = `${window.location.origin}/login.html`
+    const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo })
+    if(error){ alert(error.message); return }
+    setSent(true)
   }
 
   return (
-    <>
-      <Nav/>
-      <section className="auth-shell">
-        <div className="card">
-          <h1>아이디/비밀번호 찾기</h1>
-          <form onSubmit={onSend}>
-            <label>가입 이메일<input type="email" required value={email} onChange={e=>setEmail(e.target.value)} /></label>
-            <button className="primary" disabled={busy}>재설정 메일 보내기</button>
+    <section className="auth">
+      <div className="panel">
+        <h1>아이디/비밀번호 찾기</h1>
+        {sent ? (
+          <p>재설정 메일을 보냈습니다. 메일함을 확인해주세요.</p>
+        ) : (
+          <form onSubmit={sendReset}>
+            <label>가입 이메일<input type="email" value={email} onChange={e=>setEmail(e.target.value)} required/></label>
+            <button className="primary">재설정 메일 보내기</button>
           </form>
-          {msg && <p className="msg">{msg}</p>}
-        </div>
-      </section>
-      <style>{css}</style>
-    </>
+        )}
+      </div>
+      <style>{panelCss}</style>
+    </section>
   )
 }
 
-const css = `
-.auth-shell{display:flex;justify-content:center;padding:24px 16px}
-.card{width:100%;max-width:560px;background:#121212;border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:16px;color:#fff}
-label{display:flex;flex-direction:column;gap:6px}
-input{border:1px solid rgba(255,255,255,.2);background:#0c0c0c;color:#fff;border-radius:10px;padding:12px}
-.primary{background:#fff;color:#111;border:0;border-radius:12px;padding:12px;font-weight:800;margin-top:12px}
-.msg{margin-top:10px;color:#ff8}
+const panelCss = `
+  .auth{min-height:calc(100vh - 64px);display:flex;align-items:flex-start;justify-content:center;padding:24px}
+  .panel{width:100%;max-width:520px;background:#111;border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:20px;color:#fff}
+  h1{margin:0 0 12px}
+  form{display:grid;gap:10px}
+  label{display:grid;gap:6px;font-weight:600}
+  input{width:100%;border:1px solid rgba(255,255,255,.25);background:#000;color:#fff;border-radius:10px;padding:12px}
+  .primary{margin-top:6px;width:100%;padding:12px;border-radius:999px;border:0;background:#fff;color:#111;font-weight:800}
 `

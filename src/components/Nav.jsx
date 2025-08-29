@@ -2,58 +2,47 @@
 import React from 'react'
 import { supabase } from '@/lib/supabaseClient.js'
 
-export default function Nav(){
-  const [user,setUser]=React.useState(null)
+export default function Nav({ active }) {
+  const [user, setUser] = React.useState(null)
 
-  React.useEffect(()=>{
-    supabase.auth.getSession().then(({data:{session}})=>setUser(session?.user??null))
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, session)=>setUser(session?.user??null))
-    return ()=>sub?.subscription?.unsubscribe?.()
-  },[])
+  React.useEffect(() => {
+    supabase.auth.getSession().then(({ data:{ session } }) => setUser(session?.user ?? null))
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setUser(s?.user ?? null))
+    return () => sub?.subscription?.unsubscribe()
+  }, [])
 
-  function onLoginClick(e){
-    e.preventDefault()
-    const ret = encodeURIComponent(location.pathname+location.search)
-    location.href = `/login.html?returnTo=${ret}`
-  }
-  async function onLogoutClick(e){
-    e.preventDefault()
-    await supabase.auth.signOut()
-    location.reload()
-  }
+  const go = (href) => { window.location.href = href }
+  const onLogin = () => go('/login.html')
+  const onLogout = async () => { await supabase.auth.signOut(); go('/') }
 
   return (
-    <nav className="nav">
-      <div className="inner">
-        <a href="/" className="brand">KIMIJI STUDIO</a>
-
+    <nav className="kj-nav">
+      <div className="kj-wrap">
+        <a className="brand" href="/">KIMIJI<br/>STUDIO</a>
         <div className="links">
-          <a href="/#portfolio">포트폴리오</a>
-          <a href="/community.html">커뮤니티</a>
-          <a href="/#about">About</a>
+          <a href="/" className={active==='portfolio'?'on':''}>포트폴리오</a>
+          <a href="/community.html" className={active==='community'?'on':''}>커뮤니티</a>
+          <a href="/#about" className={active==='about'?'on':''}>About</a>
         </div>
-
-        <div className="right">
-          {user ? (
-            <a href="#" onClick={onLogoutClick} className="btn ghost">로그아웃</a>
-          ) : (
-            <a href="#" onClick={onLoginClick} className="btn ghost">로그인</a>
-          )}
-          {/* 제작하기: 눌러도 아무 동작 없음(요청사항) */}
-          <a href="#" onClick={e=>e.preventDefault()} className="btn cta">제작하기</a>
+        <div className="actions">
+          {user
+            ? <button className="ghost" onClick={onLogout}>로그아웃</button>
+            : <button className="ghost" onClick={onLogin}>로그인</button>
+          }
+          <a className="cta" href="#" onClick={(e)=>e.preventDefault()}>제작하기</a>
         </div>
       </div>
 
       <style>{`
-        .nav{position:sticky;top:0;background:#000;color:#fff;z-index:1000}
-        .inner{max-width:980px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:12px 16px}
-        .brand{font-weight:900;color:#fff}
+        .kj-nav{position:sticky;top:0;z-index:50;background:#000;color:#fff}
+        .kj-wrap{max-width:980px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+        .brand{font-weight:900;line-height:1;text-decoration:none;color:#fff}
         .links{display:flex;gap:18px}
-        .links a{color:#fff;opacity:.9}
-        .right{display:flex;gap:10px}
-        .btn{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;text-decoration:none;font-weight:800}
-        .btn.ghost{border:1px solid rgba(255,255,255,.3);color:#fff}
-        .btn.cta{background:#fff;color:#111;border:0}
+        .links a{color:#fff;opacity:.9;text-decoration:none}
+        .links a.on{font-weight:800}
+        .actions{display:flex;gap:8px;align-items:center}
+        .ghost{background:transparent;border:1px solid rgba(255,255,255,.3);border-radius:999px;color:#fff;padding:8px 14px}
+        .cta{display:inline-block;background:#fff;color:#000;border-radius:999px;padding:8px 14px;font-weight:800;text-decoration:none}
       `}</style>
     </nav>
   )
