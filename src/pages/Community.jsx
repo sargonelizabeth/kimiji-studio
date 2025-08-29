@@ -2,8 +2,8 @@
 import React from "react";
 import { supabase } from "@/lib/supabaseClient.js";
 
-const BUCKET = "photo";      // Storage 버킷
-const TABLE  = "photo";      // 업로드 메타 저장 테이블
+const BUCKET = "photo"; // Storage 버킷
+const TABLE  = "photo"; // 업로드 메타 저장 테이블
 const krw = n => new Intl.NumberFormat("ko-KR",{style:"currency",currency:"KRW"}).format(n||0);
 
 export default function Community(){
@@ -12,14 +12,12 @@ export default function Community(){
   const [photos, setPhotos] = React.useState([]);
   const fileRef = React.useRef(null);
 
-  // 로그인 세션
   React.useEffect(()=>{
     supabase.auth.getSession().then(({data:{session}})=>setUser(session?.user??null));
     const { data:sub } = supabase.auth.onAuthStateChange((_e, session)=>setUser(session?.user??null));
     return ()=>sub?.subscription?.unsubscribe?.();
   },[]);
 
-  // 지표
   React.useEffect(()=>{
     (async ()=>{
       try{
@@ -30,12 +28,10 @@ export default function Community(){
     })();
   },[]);
 
-  // 피드(최신순 고정)
   React.useEffect(()=>{ load(true); },[]);
   async function load(reset=false){
     try{
-      const { data } = await supabase
-        .from(TABLE)
+      const { data } = await supabase.from(TABLE)
         .select("id,user_id,public_url,caption,created_at")
         .order("created_at",{ascending:false})
         .limit(30);
@@ -43,53 +39,46 @@ export default function Community(){
     }catch(e){ console.warn("feed load skipped:", e); }
   }
 
-  // 네비 CTA와 상단 버튼이 같은 피커를 열 수 있도록 전역 콜백 노출
+  // 네비게이션 CTA도 같은 피커를 열게끔 전역 콜백
   React.useEffect(()=>{
     window.__openUpload = async () => {
       const { data:{ session } } = await supabase.auth.getSession();
-      if(!session?.user){ window.location.href="/signup.html"; return; }
-      // iOS 제약을 피하려면 "사용자 클릭" 콜스택에서 실행되어야 함
+      if(!session?.user){ location.href="/signup.html"; return; }
       fileRef.current?.click();
     };
     return ()=>{ try{ delete window.__openUpload; }catch{} };
   },[]);
 
-  // 파일 선택
   async function handlePick(e){
     const file = e.target.files?.[0];
     e.target.value = ""; // 같은 파일 재선택 허용
     if(!file) return;
 
-    if (!file.type?.startsWith("image/")){
+    if(!file.type?.startsWith("image/")){
       alert("이미지 파일만 업로드할 수 있습니다.");
       return;
     }
     const { data:{ session } } = await supabase.auth.getSession();
     if(!session?.user){ alert("로그인이 필요합니다."); return; }
 
-    const ext = (file.name.split(".").pop()||"jpg").toLowerCase();
+    const ext  = (file.name.split(".").pop()||"jpg").toLowerCase();
     const path = `${session.user.id}/${Date.now()}.${ext}`;
 
-    // 1) Storage 업로드
     const { error:upErr } = await supabase.storage.from(BUCKET)
       .upload(path, file, { upsert:false, cacheControl:"3600" });
     if(upErr){ alert("업로드 실패: " + upErr.message); return; }
 
-    // 2) 퍼블릭 URL
     const { data:pub } = supabase.storage.from(BUCKET).getPublicUrl(path);
-
-    // 3) DB 메타 저장
     const { error:dbErr } = await supabase.from(TABLE)
-      .insert({ user_id: session.user.id, storage_path: path, public_url: pub.publicUrl, caption: "" });
+      .insert({ user_id:session.user.id, storage_path:path, public_url:pub.publicUrl, caption:"" });
     if(dbErr){ alert("DB 저장 실패: " + dbErr.message); return; }
 
-    // 4) 리스트 갱신
     setPhotos([]); load(true);
   }
 
   return (
     <section className="community">
-      {/* iOS 안전한 피커: 화면 밖 1×1, 투명 */}
+      {/* iOS 안전한 파일 피커: 화면 밖 1×1, 투명 */}
       <input
         ref={fileRef}
         id="community-file-input"
@@ -102,23 +91,22 @@ export default function Community(){
       />
 
       <div className="kj-container">
-        {/* 상단 지표 */}
         <div className="metrics">
           <div className="row"><div>상금</div><div>{krw(metrics.prize_krw)}</div></div>
           <div className="div" />
           <div className="row"><div>누적 후원 금액</div><div>{krw(metrics.cumulative_krw)}</div></div>
         </div>
 
-        {/* 갤러리 헤더(우측 업로드 버튼) */}
         <div className="gallery-head">
           <h2>사진 갤러리</h2>
           <button className="upload" onClick={()=>window.__openUpload?.()}>업로드</button>
         </div>
 
-        {/* 그리드 */}
         <div className="grid">
           {photos.map(p => <Card key={p.id} p={p} authed={!!user} />)}
-          {photos.length===0 && <div className="empty">아직 업로드가 없어요. 로그인 후 첫 사진을 올려보세요.</div>}
+          {photos.length===0 && (
+            <div className="empty">아직 업로드가 없어요. 로그인 후 첫 사진을 올려보세요.</div>
+          )}
         </div>
       </div>
 
